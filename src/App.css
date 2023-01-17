@@ -1,10 +1,92 @@
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #282c34;
+  color: white;
+}
+
 .App {
   text-align: center;
+  min-width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-next {
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  padding-top: 2vh;
+  min-height: 90vh;
+}
+
+.App-left {
+  background-color: #282f3f;
+  align-items:center;
+  min-width: 55vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.data-row {
+  min-width: 50vw;
+  text-align:left;
+  padding-left: 10vw;
+}
+
+.space-row {
+  min-height: 30vh;
+}
+
+.swap-row {
+  min-height: 34px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.swap-row-left {
+  min-width: 3vw;
+}
+
+.swap-row-right {
+  min-width: 3vw;
+}
+
+.emergency-button {
+  background-color: #611a1b;
+  min-height: 12vh;
+  min-width: 30vw;
+  font-size: calc(12px + 2vmin);
+}
+
+.time-button {
+  background-color: #282c34;
+  min-height: 12vh;
+  min-width: 30vw;
+  font-size: calc(12px + 2vmin);
+}
+
+.App-right {
+  background-color: #382c34;
+  align-items: flex-end;
+  text-align: right;
+  min-width: 35vw;
+  display: flex;
+  flex-direction: column;
+  padding-right: 5vw;
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 10vmin;
   pointer-events: none;
+  padding: 1vw;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -14,14 +96,26 @@
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  min-height: 10vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: white;
+}
+
+.header-left {
+  min-width: 48vw;
+  display: flex;
+  flex-direction: row;
+  padding-left: 2vw;
+}
+
+.header-right {
+  min-width: 48vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  padding-right: 2vw;
 }
 
 .App-link {
