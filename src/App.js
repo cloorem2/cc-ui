@@ -37,7 +37,7 @@ import {
 require('@solana/wallet-adapter-react-ui/styles.css');
 const sleep = require('sleep');
 
-const spw = new BN(60*60*24*7);
+const spw = 60*60*24*7;
 const BN_60 = new BN(60);
 const BN_24 = new BN(24);
 const BN_7 = new BN(7);
@@ -677,17 +677,17 @@ function App() {
   }
 
   function doUpdateClock() {
-    let tt = spw - new BN(timestamp) % spw;
-    let ttleft = (tt % BN_60).toString();
-    tt /= BN_60;
-    if (tt > BN_0) {
-      ttleft = (tt % BN_60).toString() + ':' + ttleft;
-      tt /= BN_60;
-      if (tt > BN_0) {
-        ttleft = (tt % BN_24).toString() + ':' + ttleft;
-        tt /= BN_24;
-        if (tt > BN_0) {
-          ttleft = (tt % BN_7).toString() + ':' +  ttleft;
+    let tt = spw - Number(timestamp) % spw;
+    let ttleft = (tt % 60).toString();
+    tt = (tt / 60).floor();
+    if (tt > 0) {
+      ttleft = (tt % 60).toString() + ':' + ttleft;
+      tt = (tt / 60).floor();
+      if (tt > 0) {
+        ttleft = (tt % 24).toString() + ':' + ttleft;
+        tt = (tt / 24).floor();
+        if (tt > 0) {
+          ttleft = (tt % 7).toString() + ':' +  ttleft;
         }
       }
     }
