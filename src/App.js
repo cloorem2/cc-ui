@@ -679,13 +679,13 @@ function App() {
   function doUpdateClock() {
     let tt = spw - Number(timestamp) % spw;
     let ttleft = (tt % 60).toString();
-    tt = (tt / 60).floor();
+    tt = Math.floor(tt / 60);
     if (tt > 0) {
       ttleft = (tt % 60).toString() + ':' + ttleft;
-      tt = (tt / 60).floor();
+      tt = Math.floor(tt / 60);
       if (tt > 0) {
         ttleft = (tt % 24).toString() + ':' + ttleft;
-        tt = (tt / 24).floor();
+        tt = Math.floor(tt / 24);
         if (tt > 0) {
           ttleft = (tt % 7).toString() + ':' +  ttleft;
         }
@@ -721,6 +721,7 @@ function App() {
     if (!clockTimer && timestamp) {
       clockTimer = setInterval(() => {
         timestamp = (Number(timestamp) + 1).toString();
+        console.log('timestamp ' + timestamp);
         doUpdateClock();
       },1000);
     }
