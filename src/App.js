@@ -58,6 +58,14 @@ const mintAuthConst = "5Ju8Dax7SgVsygfwkkuDX1eoJHwCQFgjpiCSctjrPZoC";
 
 const network = clusterApiUrl('devnet');
 
+let mintAuth, mintAuthBump;
+let ccMint, ccMintBump;
+let ccb0Mint, ccb0MintBump;
+let ccb1Mint, ccb1MintBump;
+let ccs0Mint, ccs0MintBump;
+let owner_cc_ata,owner_ccb0_ata,owner_ccb1_ata,owner_ccs0_ata;
+let cc_ata,ccb0_ata,ccb1_ata,ccs0_ata;
+
 class AppHeader extends React.Component {
   render() {
     return (
@@ -98,6 +106,60 @@ function App() {
   const wallet = useWallet();
   const { signTransaction } = useWallet();
 
+  async function initAddrs() {
+    const connection = new Connection(network, opts.preflightCommitment);
+    const provider = new AnchorProvider(
+      connection, wallet, opts.preflightCommitment,
+    );
+    const program = new Program(idl, programID, provider);
+
+    [ mintAuth, mintAuthBump ] = await web3.PublicKey.findProgramAddress(
+        [ Buffer.from("mint_auth_") ], program.programId );
+
+    [ ccMint, ccMintBump ] = await web3.PublicKey.findProgramAddress(
+        [ Buffer.from("cc_mint_") ], program.programId );
+    [ ccb0Mint, ccb0MintBump ] = await web3.PublicKey.findProgramAddress(
+        [ Buffer.from("ccb0_mint_") ], program.programId );
+    [ ccb1Mint, ccb1MintBump ] = await web3.PublicKey.findProgramAddress(
+        [ Buffer.from("ccb1_mint_") ], program.programId );
+    [ ccs0Mint, ccs0MintBump ] = await web3.PublicKey.findProgramAddress(
+        [ Buffer.from("ccs0_mint_") ], program.programId );
+
+    owner_cc_ata = await utils.token.associatedAddress({
+      mint: ccMint,
+      owner: provider.wallet.publicKey
+    });
+    owner_ccb0_ata = await utils.token.associatedAddress({
+      mint: ccb0Mint,
+      owner: provider.wallet.publicKey
+    });
+    owner_ccb1_ata = await utils.token.associatedAddress({
+      mint: ccb1Mint,
+      owner: provider.wallet.publicKey
+    });
+    owner_ccs0_ata = await utils.token.associatedAddress({
+      mint: ccs0Mint,
+      owner: provider.wallet.publicKey
+    });
+
+    cc_ata = await utils.token.associatedAddress({
+      mint: ccMint,
+      owner: mintAuth
+    });
+    ccb0_ata = await utils.token.associatedAddress({
+      mint: ccb0Mint,
+      owner: mintAuth
+    });
+    ccb1_ata = await utils.token.associatedAddress({
+      mint: ccb1Mint,
+      owner: mintAuth
+    });
+    ccs0_ata = await utils.token.associatedAddress({
+      mint: ccs0Mint,
+      owner: mintAuth
+    });
+  }
+
   async function getProvider() {
     /* create the provider and return it to the caller */
     /* network set to local network for now */
@@ -113,11 +175,7 @@ function App() {
   async function doFetchState() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    const [ mintAuth, mintAuthBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("mint_auth_") ], program.programId
-      );
-
+    await initAddrs();
     try {
       const state = await program.account.mintAuth.fetch(mintAuth);
       // console.log('state: ', state);
@@ -138,16 +196,11 @@ function App() {
     );
     const program = new Program(idl, programID, provider);
     let ccbA = 0;
+    await initAddrs();
 
     // cc bal
-    const [ ccMint, ccMintBump ] = await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("cc_mint_") ], program.programId );
-    const cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: provider.wallet.publicKey
-    });
     try {
-      const ccAccount = await getAccount(connection, cc_ata);
+      const ccAccount = await getAccount(connection, owner_cc_ata);
       setCcBal(ccAccount.amount.toString());
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -156,7 +209,7 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            cc_ata,
+            owner_cc_ata,
             provider.wallet.publicKey,
             ccMint
           ));
@@ -168,23 +221,15 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccAccount = await getAccount(connection, cc_ata);
+          const ccAccount = await getAccount(connection, owner_cc_ata);
           setCcBal(ccAccount.amount.toString());
         } catch {}
       }
     }
 
     // ccb bal
-    const [ ccb0Mint, ccb0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb0_mint_") ], program.programId
-      );
-    const ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: provider.wallet.publicKey
-    });
     try {
-      const ccb0Account = await getAccount(connection, ccb0_ata);
+      const ccb0Account = await getAccount(connection, owner_ccb0_ata);
       setCcb0Bal(ccb0Account.amount.toString());
       ccbA += Number(ccb0Account.amount);
     } catch (err) {
@@ -194,11 +239,10 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            ccb0_ata,
+            owner_ccb0_ata,
             provider.wallet.publicKey,
             ccb0Mint
           ));
-          // const connection = new Connection(network, opts.preflightCommitment);
           tx.feePayer = provider.wallet.publicKey;
           const blockHash = await provider.connection.getRecentBlockhash();
           tx.recentBlockhash = await blockHash.blockhash;
@@ -206,23 +250,15 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccb0Account = await getAccount(connection, ccb0_ata);
+          const ccb0Account = await getAccount(connection, owner_ccb0_ata);
           setCcb0Bal(ccb0Account.amount.toString());
           ccbA += Number(ccb0Account.amount);
         } catch {}
       }
     }
 
-    const [ ccb1Mint, ccb1MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb1_mint_") ], program.programId
-      );
-    const ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: provider.wallet.publicKey
-    });
     try {
-      const ccb1Account = await getAccount(connection, ccb1_ata);
+      const ccb1Account = await getAccount(connection, owner_ccb1_ata);
       setCcb1Bal(ccb1Account.amount.toString());
       ccbA += Number(ccb1Account.amount);
     } catch (err) {
@@ -232,11 +268,10 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            ccb1_ata,
+            owner_ccb1_ata,
             provider.wallet.publicKey,
             ccb1Mint
           ));
-          // const connection = new Connection(network, opts.preflightCommitment);
           tx.feePayer = provider.wallet.publicKey;
           const blockHash = await provider.connection.getRecentBlockhash();
           tx.recentBlockhash = await blockHash.blockhash;
@@ -244,26 +279,16 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccb1Account = await getAccount(connection, ccb1_ata);
+          const ccb1Account = await getAccount(connection, owner_ccb1_ata);
           setCcb1Bal(ccb1Account.amount.toString());
           ccbA += Number(ccb1Account.amount);
         } catch {}
       }
     }
-    // setCcbBal(ccbA.toString());
-    console.log('ccbA ' + ccbA);
 
     // ccs bal
-    const [ ccs0Mint, ccs0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccs0_mint_") ], program.programId
-      );
-    const ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: provider.wallet.publicKey
-    });
     try {
-      const ccs0Account = await getAccount(connection, ccs0_ata);
+      const ccs0Account = await getAccount(connection, owner_ccs0_ata);
       setCcsBal(ccs0Account.amount.toString())
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -272,11 +297,10 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            ccs0_ata,
+            owner_ccs0_ata,
             provider.wallet.publicKey,
             ccs0Mint
           ));
-          // const connection = new Connection(network, opts.preflightCommitment);
           tx.feePayer = provider.wallet.publicKey;
           const blockHash = await provider.connection.getRecentBlockhash();
           tx.recentBlockhash = await blockHash.blockhash;
@@ -284,7 +308,7 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccs0Account = await getAccount(connection, ccs0_ata);
+          const ccs0Account = await getAccount(connection, owner_ccs0_ata);
           setCcsBal(ccs0Account.amount.toString())
         } catch {}
       }
@@ -308,13 +332,8 @@ function App() {
       connection, wallet, opts.preflightCommitment,
     );
     const program = new Program(idl, programID, provider);
+    await initAddrs();
     // cc bal
-    const [ ccMint, ccMintBump ] = await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("cc_mint_") ], program.programId );
-    const cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: new PublicKey(mintAuthConst)
-    });
     try {
       const ccAccount = await getAccount(connection, cc_ata);
       setCcProgBal(ccAccount.amount.toString());
@@ -330,27 +349,14 @@ function App() {
     );
     const program = new Program(idl, programID, provider);
     let ccbA = 0;
+    await initAddrs();
 
     // ccb bal
-    const [ ccb0Mint, ccb0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb0_mint_") ], program.programId );
-    const ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: new PublicKey(mintAuthConst)
-    });
     try {
       const ccb0Account = await getAccount(connection, ccb0_ata);
       ccbA += Number(ccb0Account.amount);
     } catch { }
 
-    const [ ccb1Mint, ccb1MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb1_mint_") ], program.programId );
-    const ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: new PublicKey(mintAuthConst)
-    });
     try {
       const ccb1Account = await getAccount(connection, ccb1_ata);
       ccbA += Number(ccb1Account.amount);
@@ -358,13 +364,6 @@ function App() {
     setCcbProgBal(ccbA.toString());
 
     // ccs bal
-    const [ ccs0Mint, ccs0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccs0_mint_") ], program.programId );
-    const ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: new PublicKey(mintAuthConst)
-    });
     try {
       const ccs0Account = await getAccount(connection, ccs0_ata);
       setCcsProgBal(ccs0Account.amount.toString())
@@ -374,78 +373,7 @@ function App() {
   async function doBuyBonds() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-
-    const [ mintAuth, mintAuthBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("mint_auth_") ], program.programId
-      );
-    console.log(`mintAuth ${mintAuthBump} ${mintAuth}`);
-
-    const [ ccMint, ccMintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("cc_mint_") ], program.programId
-      );
-    console.log(`ccMint ${ccMintBump} ${ccMint}`);
-
-    const [ ccb0Mint, ccb0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb0_mint_") ], program.programId
-      );
-    console.log(`ccb0Mint ${ccb0MintBump} ${ccb0Mint}`);
-
-    const [ ccb1Mint, ccb1MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb1_mint_") ], program.programId
-      );
-    console.log(`ccb1Mint ${ccb1MintBump} ${ccb1Mint}`);
-
-    const [ ccs0Mint, ccs0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccs0_mint_") ], program.programId
-      );
-    console.log(`ccs0Mint ${ccs0MintBump} ${ccs0Mint}`);
-
-    const cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: mintAuth,
-    });
-    console.log(`cc_ata ${cc_ata}`);
-
-    const ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb0_ata ${ccb0_ata}`);
-
-    const ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb1_ata ${ccb1_ata}`);
-
-    const ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccs0_ata ${ccs0_ata}`);
-
-    const owner_cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_cc_ata ${owner_cc_ata}`);
-
-    const owner_ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccb0_ata ${owner_ccb0_ata}`);
-
-    const owner_ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccb1_ata ${owner_ccb1_ata}`);
+    await initAddrs();
 
     if (pstate === '0') {
       try {
@@ -503,77 +431,7 @@ function App() {
   async function doSellBonds() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    const [ mintAuth, mintAuthBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("mint_auth_") ], program.programId
-      );
-    console.log(`mintAuth ${mintAuthBump} ${mintAuth}`);
-
-    const [ ccMint, ccMintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("cc_mint_") ], program.programId
-      );
-    console.log(`ccMint ${ccMintBump} ${ccMint}`);
-
-    const [ ccb0Mint, ccb0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb0_mint_") ], program.programId
-      );
-    console.log(`ccb0Mint ${ccb0MintBump} ${ccb0Mint}`);
-
-    const [ ccb1Mint, ccb1MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb1_mint_") ], program.programId
-      );
-    console.log(`ccb1Mint ${ccb1MintBump} ${ccb1Mint}`);
-
-    const [ ccs0Mint, ccs0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccs0_mint_") ], program.programId
-      );
-    console.log(`ccs0Mint ${ccs0MintBump} ${ccs0Mint}`);
-
-    const cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: mintAuth,
-    });
-    console.log(`cc_ata ${cc_ata}`);
-
-    const ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb0_ata ${ccb0_ata}`);
-
-    const ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb1_ata ${ccb1_ata}`);
-
-    const ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccs0_ata ${ccs0_ata}`);
-
-    const owner_cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_cc_ata ${owner_cc_ata}`);
-
-    const owner_ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccb0_ata ${owner_ccb0_ata}`);
-
-    const owner_ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccb1_ata ${owner_ccb1_ata}`);
+    await initAddrs();
 
     if (pstate === '0') {
       try {
@@ -631,72 +489,7 @@ function App() {
   async function doBuyShorts() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-
-    const [ mintAuth, mintAuthBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("mint_auth_") ], program.programId
-      );
-    console.log(`mintAuth ${mintAuthBump} ${mintAuth}`);
-
-    const [ ccMint, ccMintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("cc_mint_") ], program.programId
-      );
-    console.log(`ccMint ${ccMintBump} ${ccMint}`);
-
-    const [ ccb0Mint, ccb0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb0_mint_") ], program.programId
-      );
-    console.log(`ccb0Mint ${ccb0MintBump} ${ccb0Mint}`);
-
-    const [ ccb1Mint, ccb1MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb1_mint_") ], program.programId
-      );
-    console.log(`ccb1Mint ${ccb1MintBump} ${ccb1Mint}`);
-
-    const [ ccs0Mint, ccs0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccs0_mint_") ], program.programId
-      );
-    console.log(`ccs0Mint ${ccs0MintBump} ${ccs0Mint}`);
-
-    const cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: mintAuth,
-    });
-    console.log(`cc_ata ${cc_ata}`);
-
-    const ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb0_ata ${ccb0_ata}`);
-
-    const ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb1_ata ${ccb1_ata}`);
-
-    const ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccs0_ata ${ccs0_ata}`);
-
-    const owner_cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_cc_ata ${owner_cc_ata}`);
-
-    const owner_ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccs0_ata ${owner_ccs0_ata}`);
+    await initAddrs();
 
     if (pstate === '0') {
       try {
@@ -754,71 +547,7 @@ function App() {
   async function doSellShorts() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    const [ mintAuth, mintAuthBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("mint_auth_") ], program.programId
-      );
-    console.log(`mintAuth ${mintAuthBump} ${mintAuth}`);
-
-    const [ ccMint, ccMintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("cc_mint_") ], program.programId
-      );
-    console.log(`ccMint ${ccMintBump} ${ccMint}`);
-
-    const [ ccb0Mint, ccb0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb0_mint_") ], program.programId
-      );
-    console.log(`ccb0Mint ${ccb0MintBump} ${ccb0Mint}`);
-
-    const [ ccb1Mint, ccb1MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb1_mint_") ], program.programId
-      );
-    console.log(`ccb1Mint ${ccb1MintBump} ${ccb1Mint}`);
-
-    const [ ccs0Mint, ccs0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccs0_mint_") ], program.programId
-      );
-    console.log(`ccs0Mint ${ccs0MintBump} ${ccs0Mint}`);
-
-    const cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: mintAuth,
-    });
-    console.log(`cc_ata ${cc_ata}`);
-
-    const ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb0_ata ${ccb0_ata}`);
-
-    const ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccb1_ata ${ccb1_ata}`);
-
-    const ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: mintAuth,
-    });
-    console.log(`ccs0_ata ${ccs0_ata}`);
-
-    const owner_cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_cc_ata ${owner_cc_ata}`);
-
-    const owner_ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccs0_ata ${owner_ccs0_ata}`);
+    await initAddrs();
 
     if (pstate === '0') {
       try {
@@ -878,48 +607,7 @@ function App() {
   async function doRedeemBonds() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-
-    const [ mintAuth, mintAuthBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("mint_auth_") ], program.programId
-      );
-    console.log(`mintAuth ${mintAuthBump} ${mintAuth}`);
-
-    const [ ccMint, ccMintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("cc_mint_") ], program.programId
-      );
-    console.log(`ccMint ${ccMintBump} ${ccMint}`);
-
-    const [ ccb0Mint, ccb0MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb0_mint_") ], program.programId
-      );
-    console.log(`ccb0Mint ${ccb0MintBump} ${ccb0Mint}`);
-
-    const [ ccb1Mint, ccb1MintBump ] =
-      await web3.PublicKey.findProgramAddress(
-        [ Buffer.from("ccb1_mint_") ], program.programId
-      );
-    console.log(`ccb1Mint ${ccb1MintBump} ${ccb1Mint}`);
-
-    const owner_cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_cc_ata ${owner_cc_ata}`);
-
-    const owner_ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccb0_ata ${owner_ccb0_ata}`);
-
-    const owner_ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: provider.wallet.publicKey
-    });
-    console.log(`owner_ccb1_ata ${owner_ccb1_ata}`);
+    await initAddrs();
 
     if (pstate === '0') {
       try {
@@ -973,6 +661,7 @@ function App() {
     doFetchState();
     getProgCcBalance();
   }
+
   if (!wallet.connected) {
     /* If the user's wallet is not connected, display connect wallet button. */
     return (
