@@ -200,7 +200,7 @@ function App() {
     try {
       const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
       // console.log('state: ', state);
-      if (!timestamp) {
+      // if (!timestamp) {
         timestamp = state.timestamp.toString();
         let tt = nspw - Number(timestamp) % nspw;
         let ttleft = (tt % 60).toString();
@@ -217,7 +217,7 @@ function App() {
           }
         }
         setTleft(ttleft);
-      }
+      // }
       setPstate(state.maturityState.toString());
       setIma0(state.ima0.toString());
     } catch (err) {
@@ -233,7 +233,6 @@ function App() {
       connection, wallet, opts.preflightCommitment,
     );
     const program = new Program(idl, programID, provider);
-    let ccbA = 0;
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     // cc bal
@@ -290,7 +289,6 @@ function App() {
 
           const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
           setCcb0Bal(ccb0Account.amount.toString());
-          ccbA += Number(ccb0Account.amount);
         } catch {}
       }
     }
@@ -319,7 +317,6 @@ function App() {
 
           const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
           setCcb1Bal(ccb1Account.amount.toString());
-          ccbA += Number(ccb1Account.amount);
         } catch {}
       }
     }
@@ -717,7 +714,7 @@ function App() {
     }
     if (!clockTimer && timestamp) {
       clockTimer = setInterval(() => {
-        timestamp = (Number(timestamp) - 1).toString();
+        timestamp = (Number(timestamp) + 1).toString();
         let tt = nspw - Number(timestamp) % nspw;
         let ttleft = (tt % 60).toString();
         tt = Number((tt/60).toFixed());
