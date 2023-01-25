@@ -100,7 +100,7 @@ class AppHeader extends React.Component {
           <h2>Currency Coin</h2>
         </div>
         <div className="header-right">
-          <h2>{this.props.ir}%</h2>
+          <h2>{this.props.ir}</h2>
         </div>
       </header>
     );
@@ -701,7 +701,7 @@ function App() {
     getOwnerBalances();
     getProgBalances();
     setInterval(doMain,10000);
-    const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + ' APY';
+    const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
     /*
     let tt = spw - new BN(timestamp) % spw;
     let tleft = (tt % BN_60).toString() + 's'; tt /= BN_60;
