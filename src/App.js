@@ -698,16 +698,16 @@ function App() {
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
     const nspw = Number(60*60*24*7);
     let tt = nspw - Number(timestamp) % nspw;
-    let ttleft = (tt % 60).toString() + 's';
+    let ttleft = (tt % 60).toString();
     tt = Number((tt/60).toFixed());
     if (tt > 0) {
-      ttleft = (tt % 60).toString() + 'm' + ttleft;
+      ttleft = (tt % 60).toString() + ':' + ttleft;
       tt = Number((tt/60).toFixed());
       if (tt > 0) {
-        ttleft = (tt % 24).toString() + 'h' + ttleft;
+        ttleft = (tt % 24).toString() + ':' + ttleft;
         tt = Number((tt/24).toFixed());
         if (tt > 0) {
-          ttleft = (tt % 7).toString() + 'd' +  ttleft;
+          ttleft = (tt % 7).toString() + ':' +  ttleft;
         }
       }
     }
@@ -787,7 +787,7 @@ function App() {
                   <button className="emergency-button"
                     onClick={doRedeemBonds}>Redeem!</button>
                 ) : (
-                  <button className="time-button">Maturity in {tleft}s</button>
+                  <button className="time-button">Maturity in {tleft}</button>
 
                 )
               }
