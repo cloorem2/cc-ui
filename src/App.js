@@ -200,7 +200,8 @@ function App() {
     try {
       const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
       // console.log('state: ', state);
-      timestamp = state.timestamp.toString();
+      if (!timestamp) {
+        timestamp = state.timestamp.toString();
         let tt = nspw - Number(timestamp) % nspw;
         let ttleft = (tt % 60).toString();
         tt = Number((tt/60).toFixed());
@@ -216,6 +217,7 @@ function App() {
           }
         }
         setTleft(ttleft);
+      }
       setPstate(state.maturityState.toString());
       setIma0(state.ima0.toString());
     } catch (err) {
