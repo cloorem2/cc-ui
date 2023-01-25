@@ -787,7 +787,7 @@ function App() {
                 onClick={e => setSellShortsAmount(ccsBal)}>Max</button>
             </div>
             <div className="space-row"></div>
-            <div className="data-row">Prices</div>
+            <div className="data-row">Reserves</div>
             <div className="data-row">CC0 {cc0Amount}</div>
             <div className="data-row">CCB {ccbProgBal}</div>
             <div className="data-row">CC1 {ccbProgBal}</div>
