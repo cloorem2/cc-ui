@@ -83,7 +83,8 @@ const gAddrs = {
   ccb1_ata: "",
   ccs0_ata: "",
 }
-let timer,clockTimer;
+let timer,clockTimer,timestamp;
+const nspw = 60*60*24*7;
 
 class AppHeader extends React.Component {
   render() {
@@ -106,7 +107,7 @@ function App() {
   // state vars
   const [ima0, setIma0] = useState(null);
   const [pstate, setPstate] = useState(null);
-  const [timestamp, setTimestamp] = useState(null);
+  const [tleft, setTleft] = useState(null);
   const [redeem, setRedeem] = useState('');
 
   const [ccBal, setCcBal] = useState(null);
@@ -199,7 +200,22 @@ function App() {
     try {
       const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
       // console.log('state: ', state);
-      setTimestamp(state.timestamp.toString());
+      timestamp = state.timestamp.toString();
+        let tt = nspw - Number(timestamp) % nspw;
+        let ttleft = (tt % 60).toString();
+        tt = Number((tt/60).toFixed());
+        if (tt > 0) {
+          ttleft = (tt % 60).toString() + ':' + ttleft;
+          tt = Number((tt/60).toFixed());
+          if (tt > 0) {
+            ttleft = (tt % 24).toString() + ':' + ttleft;
+            tt = Number((tt/24).toFixed());
+            if (tt > 0) {
+              ttleft = (tt % 7).toString() + ':' +  ttleft;
+            }
+          }
+        }
+        setTleft(ttleft);
       setPstate(state.maturityState.toString());
       setIma0(state.ima0.toString());
     } catch (err) {
@@ -690,33 +706,34 @@ function App() {
       </div>
     )
   } else {
-    doFetchState();
-    getProgCcBalance();
-    getOwnerBalances();
-    getProgBalances();
-    // if (!timer) timer = setInterval(doMain,10000);
-    if (!clockTimer) {
+    if (!timer) {
+      doFetchState();
+      getProgCcBalance();
+      getOwnerBalances();
+      getProgBalances();
+      timer = setInterval(doMain,10000);
+    }
+    if (!clockTimer && timestamp) {
       clockTimer = setInterval(() => {
-        setTimestamp((Number(timestamp) - 1).toString());
+        timestamp = (Number(timestamp) - 1).toString();
+        let tt = nspw - Number(timestamp) % nspw;
+        let ttleft = (tt % 60).toString();
+        tt = Number((tt/60).toFixed());
+        if (tt > 0) {
+          ttleft = (tt % 60).toString() + ':' + ttleft;
+          tt = Number((tt/60).toFixed());
+          if (tt > 0) {
+            ttleft = (tt % 24).toString() + ':' + ttleft;
+            tt = Number((tt/24).toFixed());
+            if (tt > 0) {
+              ttleft = (tt % 7).toString() + ':' +  ttleft;
+            }
+          }
+        }
+        setTleft(ttleft);
       },1000);
     }
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
-    const nspw = Number(60*60*24*7);
-    let tt = nspw - Number(timestamp) % nspw;
-    let ttleft = (tt % 60).toString();
-    tt = Number((tt/60).toFixed());
-    if (tt > 0) {
-      ttleft = (tt % 60).toString() + ':' + ttleft;
-      tt = Number((tt/60).toFixed());
-      if (tt > 0) {
-        ttleft = (tt % 24).toString() + ':' + ttleft;
-        tt = Number((tt/24).toFixed());
-        if (tt > 0) {
-          ttleft = (tt % 7).toString() + ':' +  ttleft;
-        }
-      }
-    }
-    const tleft = ttleft;
     const ccbBal = (Number(ccb0Bal) + Number(ccb1Bal)).toString();
 
     const ccbA = Number(ccbProgBal);
