@@ -681,17 +681,17 @@ function App() {
     let ttleft,tstr = (tt % 60).toString();
     tt = Math.floor(tt / 60);
     if (tt > 0) {
-      while (tstr.length() < 2) tstr = '0' + tstr;
+      while (tstr.length < 2) tstr = '0' + tstr;
       ttleft = tstr;
       tstr = (tt % 60).toString();
       tt = Math.floor(tt / 60);
       if (tt > 0) {
-        while (tstr.length() < 2) tstr = '0' + tstr;
+        while (tstr.length < 2) tstr = '0' + tstr;
         ttleft = tstr + ':' + ttleft;
         tstr = (tt % 24).toString();
         tt = Math.floor(tt / 24);
         if (tt > 0) {
-          while (tstr.length() < 2) tstr = '0' + tstr;
+          while (tstr.length < 2) tstr = '0' + tstr;
           ttleft = tstr + ':' + ttleft;
           ttleft = (tt % 7).toString() + ':' +  ttleft;
         } else {
