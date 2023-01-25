@@ -83,13 +83,6 @@ const gAddrs = {
   ccb1_ata: "",
   ccs0_ata: "",
 }
-// let mintAuth, mintAuthBump;
-// let ccMint, ccMintBump;
-// let ccb0Mint, ccb0MintBump;
-// let ccb1Mint, ccb1MintBump;
-// let ccs0Mint, ccs0MintBump;
-// let owner_cc_ata,owner_ccb0_ata,owner_ccb1_ata,owner_ccs0_ata;
-// let cc_ata,ccb0_ata,ccb1_ata,ccs0_ata;
 
 class AppHeader extends React.Component {
   render() {
@@ -702,7 +695,6 @@ function App() {
     getProgBalances();
     setInterval(doMain,10000);
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
-    /*
     let tt = spw - new BN(timestamp) % spw;
     let tleft = (tt % BN_60).toString() + 's'; tt /= BN_60;
     if (tt > BN_0) {
@@ -714,9 +706,8 @@ function App() {
         }
       }
     }
-    */
-    const nspw = Number(60*60*24*7);
-    const tleft = (nspw - (Number(timestamp) % nspw)).toString();
+    // const nspw = Number(60*60*24*7);
+    // const tleft = (nspw - (Number(timestamp) % nspw)).toString();
     const ccbBal = (Number(ccb0Bal) + Number(ccb1Bal)).toString();
 
     const ccbA = Number(ccbProgBal);
