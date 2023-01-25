@@ -695,14 +695,18 @@ function App() {
     getProgBalances();
     // setInterval(doMain,10000);
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
-    let tt = spw - new BN(timestamp) % spw;
-    let tleft = (tt % BN_60).toString() + 's'; tt /= BN_60;
-    if (tt > BN_0) {
-      tleft = (tt % BN_60).toString() + 'm' + tleft; tt /= BN_60;
-      if (tt > BN_0) {
-        tleft = (tt % BN_24).toString() + 'h' + tleft; tt /= BN_24;
-        if (tt > BN_0) {
-          tleft = (tt % BN_7).toString() + 'd' +  tleft;
+    const nspw = Number(60*60*24*7);
+    let tt = nspw - Number(timestamp) % nspw;
+    let tleft = (tt % 60).toString() + 's';
+    tt = Number((tt/60).toFixed());
+    if (tt > 0) {
+      tleft = (tt % 60).toString() + 'm' + tleft;
+      tt = Number((tt/60).toFixed());
+      if (tt > 0) {
+        tleft = (tt % 24).toString() + 'h' + tleft;
+        tt = Number((tt/24).toFixed());
+        if (tt > 0) {
+          tleft = (tt % 7).toString() + 'd' +  tleft;
         }
       }
     }
