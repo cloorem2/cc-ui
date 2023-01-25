@@ -83,7 +83,7 @@ const gAddrs = {
   ccb1_ata: "",
   ccs0_ata: "",
 }
-let timer,clockTimer,timestamp;
+let fetchTimer,clockTimer,timestamp;
 const nspw = 60*60*24*7;
 
 class AppHeader extends React.Component {
@@ -202,21 +202,7 @@ function App() {
       // console.log('state: ', state);
       // if (!timestamp) {
         timestamp = state.timestamp.toString();
-        let tt = nspw - Number(timestamp) % nspw;
-        let ttleft = (tt % 60).toString();
-        tt = Number((tt/60).toFixed());
-        if (tt > 0) {
-          ttleft = (tt % 60).toString() + ':' + ttleft;
-          tt = Number((tt/60).toFixed());
-          if (tt > 0) {
-            ttleft = (tt % 24).toString() + ':' + ttleft;
-            tt = Number((tt/24).toFixed());
-            if (tt > 0) {
-              ttleft = (tt % 7).toString() + ':' +  ttleft;
-            }
-          }
-        }
-        setTleft(ttleft);
+        doUpdateClock();
       // }
       setPstate(state.maturityState.toString());
       setIma0(state.ima0.toString());
@@ -690,6 +676,24 @@ function App() {
     }
   }
 
+  function doUpdateClock() {
+    let tt = spw - new BN(timestamp) % spw;
+    let ttleft = (tt % BN_60).toString();
+    tt = Number((tt / BN_60).toFixed());
+    if (tt > BN_0) {
+      ttleft = (tt % BN_60).toString() + ':' + ttleft;
+      tt = Number((tt / BN_60).toFixed());
+      if (tt > BN_0) {
+        ttleft = (tt % BN_24).toString() + ':' + ttleft;
+        tt = Number((tt / BN_24).toFixed());
+        if (tt > BN_0) {
+          ttleft = (tt % BN_7).toString() + ':' +  ttleft;
+        }
+      }
+    }
+    setTleft(ttleft);
+  }
+
   async function doMultiple() {
     await doFetchState();
     await getProgCcBalance();
@@ -710,28 +714,14 @@ function App() {
       </div>
     )
   } else {
-    if (!timer) {
-      timer = setInterval(doMultiple,10000);
+    if (!fetchTimer) {
+      fetchTimer = setInterval(doMultiple,10000);
       doOnce();
     }
     if (!clockTimer && timestamp) {
       clockTimer = setInterval(() => {
         timestamp = (Number(timestamp) + 1).toString();
-        let tt = nspw - Number(timestamp) % nspw;
-        let ttleft = (tt % 60).toString();
-        tt = Number((tt/60).toFixed());
-        if (tt > 0) {
-          ttleft = (tt % 60).toString() + ':' + ttleft;
-          tt = Number((tt/60).toFixed());
-          if (tt > 0) {
-            ttleft = (tt % 24).toString() + ':' + ttleft;
-            tt = Number((tt/24).toFixed());
-            if (tt > 0) {
-              ttleft = (tt % 7).toString() + ':' +  ttleft;
-            }
-          }
-        }
-        setTleft(ttleft);
+        doUpdateClock();
       },1000);
     }
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
