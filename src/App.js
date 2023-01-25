@@ -37,6 +37,11 @@ import {
 require('@solana/wallet-adapter-react-ui/styles.css');
 const sleep = require('sleep');
 
+const spw = new BN(60*60*24*7);
+const BN_60 = new BN(60);
+const BN_24 = new BN(24);
+const BN_7 = new BN(7);
+const BN_0 = new BN(0);
 
 const wallets = [
   /* view list of available wallets at https://github.com/solana-labs/wallet-adapter#wallets */
@@ -675,9 +680,20 @@ function App() {
     getOwnerBalances();
     getProgBalances();
     setInterval(doMain,10000);
-    const ir = (Number(ima0)*60*60*24*365*100).toFixed(2);
-    const spw = Number(60*60*24*7);
-    const tleft = (spw - (Number(timestamp) % spw)).toString();
+    const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + ' APY';
+    let tt = spw - new BN(timestamp) % spw;
+    let tleft = (tt % BN_60).toString() + 's'; tt /= BN_60;
+    if (tt > BN_0) {
+      tleft = (tt % BN_60).toString() + 'm' + tleft; tt /= BN_60;
+      if (tt > BN_0) {
+        tleft = (tt % BN_24).toString() + 'h' + tleft; tt /= BN_24;
+        if (tt > BN_0) {
+          tleft = (tt % BN_7).toString() + 'd' +  tleft;
+        }
+      }
+    }
+    // const nspw = Number(60*60*24*7);
+    // const tleft = (nspw - (Number(timestamp) % nspw)).toString();
     const ccbBal = (Number(ccb0Bal) + Number(ccb1Bal)).toString();
 
     const ccbA = Number(ccbProgBal);
