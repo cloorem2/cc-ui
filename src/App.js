@@ -679,13 +679,13 @@ function App() {
   function doUpdateClock() {
     let tt = spw - new BN(timestamp) % spw;
     let ttleft = (tt % BN_60).toString();
-    tt = Number((tt / BN_60).toFixed());
+    tt /= BN_60;
     if (tt > BN_0) {
       ttleft = (tt % BN_60).toString() + ':' + ttleft;
-      tt = Number((tt / BN_60).toFixed());
+      tt /= BN_60;
       if (tt > BN_0) {
         ttleft = (tt % BN_24).toString() + ':' + ttleft;
-        tt = Number((tt / BN_24).toFixed());
+        tt /= BN_24;
         if (tt > BN_0) {
           ttleft = (tt % BN_7).toString() + ':' +  ttleft;
         }
