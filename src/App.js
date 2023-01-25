@@ -268,7 +268,6 @@ function App() {
     try {
       const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
       setCcb0Bal(ccb0Account.amount.toString());
-      ccbA += Number(ccb0Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
         || err.message === 'TokenInvalidAccountOwnerError') {
@@ -296,7 +295,6 @@ function App() {
     try {
       const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
       setCcb1Bal(ccb1Account.amount.toString());
-      ccbA += Number(ccb1Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
         || err.message === 'TokenInvalidAccountOwnerError') {
@@ -692,9 +690,16 @@ function App() {
     }
   }
 
-  async function doMain() {
+  async function doMultiple() {
     await doFetchState();
     await getProgCcBalance();
+  }
+
+  async function doOnce() {
+    await doFetchState();
+    await getProgCcBalance();
+    await getOwnerBalances();
+    await getProgBalances();
   }
 
   if (!wallet.connected) {
@@ -706,11 +711,8 @@ function App() {
     )
   } else {
     if (!timer) {
-      doFetchState();
-      getProgCcBalance();
-      getOwnerBalances();
-      getProgBalances();
-      timer = setInterval(doMain,10000);
+      timer = setInterval(doMultiple,10000);
+      doOnce();
     }
     if (!clockTimer && timestamp) {
       clockTimer = setInterval(() => {
