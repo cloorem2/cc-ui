@@ -678,18 +678,30 @@ function App() {
 
   function doUpdateClock() {
     let tt = spw - Number(timestamp) % spw;
-    let ttleft = (tt % 60).toString();
+    let ttleft,tstr = (tt % 60).toString();
     tt = Math.floor(tt / 60);
     if (tt > 0) {
-      ttleft = (tt % 60).toString() + ':' + ttleft;
+      while (tstr.length() < 2) tstr = '0' + tstr;
+      ttleft = tstr;
+      tstr = (tt % 60).toString();
       tt = Math.floor(tt / 60);
       if (tt > 0) {
-        ttleft = (tt % 24).toString() + ':' + ttleft;
+        while (tstr.length() < 2) tstr = '0' + tstr;
+        ttleft = tstr + ':' + ttleft;
+        tstr = (tt % 24).toString();
         tt = Math.floor(tt / 24);
         if (tt > 0) {
+          while (tstr.length() < 2) tstr = '0' + tstr;
+          ttleft = tstr + ':' + ttleft;
           ttleft = (tt % 7).toString() + ':' +  ttleft;
+        } else {
+          ttleft = tstr + ':' + ttleft;
         }
+      } else {
+        ttleft = tstr + ':' + ttleft;
       }
+    } else {
+      ttleft = tstr;
     }
     setTleft(ttleft);
   }
