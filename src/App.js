@@ -83,6 +83,7 @@ const gAddrs = {
   ccb1_ata: "",
   ccs0_ata: "",
 }
+let timer;
 
 class AppHeader extends React.Component {
   render() {
@@ -676,9 +677,9 @@ function App() {
     }
   }
 
-  function doMain() {
-    doFetchState();
-    getProgCcBalance();
+  async function doMain() {
+    await doFetchState();
+    await getProgCcBalance();
   }
 
   if (!wallet.connected) {
@@ -693,23 +694,24 @@ function App() {
     getProgCcBalance();
     getOwnerBalances();
     getProgBalances();
-    // setInterval(doMain,10000);
+    // if (!timer) timer = setInterval(doMain,10000);
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
     const nspw = Number(60*60*24*7);
     let tt = nspw - Number(timestamp) % nspw;
-    let tleft = (tt % 60).toString() + 's';
+    let ttleft = (tt % 60).toString() + 's';
     tt = Number((tt/60).toFixed());
     if (tt > 0) {
-      tleft = (tt % 60).toString() + 'm' + tleft;
+      ttleft = (tt % 60).toString() + 'm' + ttleft;
       tt = Number((tt/60).toFixed());
       if (tt > 0) {
-        tleft = (tt % 24).toString() + 'h' + tleft;
+        ttleft = (tt % 24).toString() + 'h' + ttleft;
         tt = Number((tt/24).toFixed());
         if (tt > 0) {
-          tleft = (tt % 7).toString() + 'd' +  tleft;
+          ttleft = (tt % 7).toString() + 'd' +  ttleft;
         }
       }
     }
+    const tleft = ttleft;
     // const nspw = Number(60*60*24*7);
     // const tleft = (nspw - (Number(timestamp) % nspw)).toString();
     const ccbBal = (Number(ccb0Bal) + Number(ccb1Bal)).toString();
