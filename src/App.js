@@ -83,7 +83,7 @@ const gAddrs = {
   ccb1_ata: "",
   ccs0_ata: "",
 }
-let timer;
+let timer,clockTimer;
 
 class AppHeader extends React.Component {
   render() {
@@ -695,6 +695,11 @@ function App() {
     getOwnerBalances();
     getProgBalances();
     // if (!timer) timer = setInterval(doMain,10000);
+    if (!clockTimer) {
+      clockTimer = setInterval(() => {
+        setTimestamp((Number(timestamp) - 1).toString());
+      },1000);
+    }
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
     const nspw = Number(60*60*24*7);
     let tt = nspw - Number(timestamp) % nspw;
@@ -712,8 +717,6 @@ function App() {
       }
     }
     const tleft = ttleft;
-    // const nspw = Number(60*60*24*7);
-    // const tleft = (nspw - (Number(timestamp) % nspw)).toString();
     const ccbBal = (Number(ccb0Bal) + Number(ccb1Bal)).toString();
 
     const ccbA = Number(ccbProgBal);
