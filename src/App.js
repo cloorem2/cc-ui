@@ -981,9 +981,11 @@ function App() {
       </div>
     )
   } else {
+    doFetchState();
+    getProgCcBalance();
     getOwnerBalances();
     getProgBalances();
-    setInterval(doMain,100000);
+    setInterval(doMain,10000);
     const ir = (Number(ima0)*60*60*24*365*100).toFixed(2);
     const spw = Number(60*60*24*7);
     const tleft = (spw - (Number(timestamp) % spw)).toString();
