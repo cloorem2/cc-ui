@@ -29,7 +29,7 @@
       "args": []
     },
     {
-      "name": "createCcMint",
+      "name": "crank0",
       "accounts": [
         {
           "name": "mintAuthority",
@@ -37,537 +37,32 @@
           "isSigner": false
         },
         {
-          "name": "mintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
+          "name": "ccb0Mint",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "systemProgram",
+          "name": "ccs0Mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ccToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ccb0Token",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "createCcb0Mint",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "createCcb1Mint",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "createCcs0Mint",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "createCcMetadata",
-      "accounts": [
-        {
-          "name": "metadataAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenMetadataProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "metadataTitle",
-          "type": "string"
-        },
-        {
-          "name": "metadataSymbol",
-          "type": "string"
-        },
-        {
-          "name": "metadataUri",
-          "type": "string"
-        },
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        },
-        {
-          "name": "ccMintBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "initCcAta",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        },
-        {
-          "name": "mintBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "initCcb0Ata",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        },
-        {
-          "name": "mintBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "initCcb1Ata",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        },
-        {
-          "name": "mintBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "initCcs0Ata",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        },
-        {
-          "name": "mintBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "initCirculation",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccMintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccb0MintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccb0TokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        },
-        {
-          "name": "ccMintBump",
-          "type": "u8"
-        },
-        {
-          "name": "ccb0MintBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "initPool0",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccMintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccb0MintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccs0MintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccb0TokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccs0TokenAccount",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -597,7 +92,7 @@
       ]
     },
     {
-      "name": "initOwnerAta",
+      "name": "crank2",
       "accounts": [
         {
           "name": "mintAuthority",
@@ -605,73 +100,32 @@
           "isSigner": false
         },
         {
-          "name": "mintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "tokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "rent",
+          "name": "ccb1Mint",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "systemProgram",
+          "name": "ccs0Mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ccToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ccb1Token",
           "isMut": false,
           "isSigner": false
         },
         {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "mintAuthBump",
-          "type": "u8"
-        }
-      ]
-    },
-    {
-      "name": "crank0",
-      "accounts": [
-        {
-          "name": "mintAuthority",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccMintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccs0MintAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ccs0TokenAccount",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -688,6 +142,10 @@
         },
         {
           "name": "ccMintBump",
+          "type": "u8"
+        },
+        {
+          "name": "ccb1MintBump",
           "type": "u8"
         },
         {
@@ -705,42 +163,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccTokenAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0TokenAccount",
+          "name": "ccb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1TokenAccount",
+          "name": "ccb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0TokenAccount",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -782,42 +240,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccTokenAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0TokenAccount",
+          "name": "ccb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1TokenAccount",
+          "name": "ccb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0TokenAccount",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -859,42 +317,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb0Account",
+          "name": "ownerCcb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0Account",
+          "name": "ccb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -941,42 +399,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb1Account",
+          "name": "ownerCcb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1Account",
+          "name": "ccb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1023,42 +481,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcs0Account",
+          "name": "ownerCcs0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0Account",
+          "name": "ccb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1105,42 +563,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcs0Account",
+          "name": "ownerCcs0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1Account",
+          "name": "ccb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1187,42 +645,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb0Account",
+          "name": "ownerCcb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0Account",
+          "name": "ccb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1269,42 +727,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb1Account",
+          "name": "ownerCcb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1Account",
+          "name": "ccb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1351,42 +809,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcs0Account",
+          "name": "ownerCcs0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0Account",
+          "name": "ccb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1433,42 +891,42 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0MintAccount",
+          "name": "ccs0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcs0Account",
+          "name": "ownerCcs0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccAccount",
+          "name": "ccToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1Account",
+          "name": "ccb1Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccs0Account",
+          "name": "ccs0Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1515,32 +973,32 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb0Account",
+          "name": "ownerCcb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb1Account",
+          "name": "ownerCcb1Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1583,32 +1041,32 @@
           "isSigner": false
         },
         {
-          "name": "ccMintAccount",
+          "name": "ccMint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb0MintAccount",
+          "name": "ccb0Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ccb1MintAccount",
+          "name": "ccb1Mint",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcAccount",
+          "name": "ownerCcToken",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb0Account",
+          "name": "ownerCcb0Token",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "ownerCcb1Account",
+          "name": "ownerCcb1Token",
           "isMut": true,
           "isSigner": false
         },
@@ -1654,19 +1112,11 @@
             "type": "i64"
           },
           {
-            "name": "cc0Amount",
+            "name": "cmod",
             "type": "f64"
           },
           {
-            "name": "ccbAmount",
-            "type": "f64"
-          },
-          {
-            "name": "cc1Amount",
-            "type": "f64"
-          },
-          {
-            "name": "ccsAmount",
+            "name": "rmod",
             "type": "f64"
           },
           {
@@ -1674,7 +1124,11 @@
             "type": "f64"
           },
           {
-            "name": "rmod",
+            "name": "isum",
+            "type": "f64"
+          },
+          {
+            "name": "smod",
             "type": "f64"
           },
           {
@@ -1686,10 +1140,6 @@
             "type": "f32"
           },
           {
-            "name": "ima2",
-            "type": "f32"
-          },
-          {
             "name": "maturityState",
             "type": "u8"
           }
@@ -1698,6 +1148,6 @@
     }
   ],
   "metadata": {
-    "address": "9Xs2Dkn42QaeZwmTq7nN5gRbZXnwiUbCRTpjb4HJy65F"
+    "address": "A3mhZsPAjroa8oQokfjGKNNNrKwbpz5ZwszHduYs6hz6"
   }
 }

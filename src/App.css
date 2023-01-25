@@ -22,8 +22,7 @@ body {
   text-align: center;
   display: flex;
   flex-direction: row;
-  padding-top: 2vh;
-  min-height: 90vh;
+  min-height: 86vh;
 }
 
 .App-left {
@@ -40,8 +39,12 @@ body {
   padding-left: 10vw;
 }
 
+.small-space-row {
+  min-height: 3vh;
+}
+
 .space-row {
-  min-height: 30vh;
+  min-height: 25vh;
 }
 
 .swap-row {
