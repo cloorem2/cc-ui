@@ -63,13 +63,33 @@ const mintAuthConst = "5Ju8Dax7SgVsygfwkkuDX1eoJHwCQFgjpiCSctjrPZoC";
 
 const network = clusterApiUrl('devnet');
 
-let mintAuth, mintAuthBump;
-let ccMint, ccMintBump;
-let ccb0Mint, ccb0MintBump;
-let ccb1Mint, ccb1MintBump;
-let ccs0Mint, ccs0MintBump;
-let owner_cc_ata,owner_ccb0_ata,owner_ccb1_ata,owner_ccs0_ata;
-let cc_ata,ccb0_ata,ccb1_ata,ccs0_ata;
+const gAddrs = {
+  mintAuth: "",
+  mintAuthBump: 0,
+  ccMint: "",
+  ccMintBump: 0,
+  ccb0Mint: "",
+  ccb0MintBump: 0,
+  ccb1Mint: "",
+  ccb1MintBump: 0,
+  ccs0Mint: "",
+  ccs0MintBump: 0,
+  owner_cc_ata: "",
+  owner_ccb0_ata: "",
+  owner_ccb1_ata: "",
+  owner_ccs0_ata: "",
+  cc_ata: "",
+  ccb0_ata: "",
+  ccb1_ata: "",
+  ccs0_ata: "",
+}
+// let mintAuth, mintAuthBump;
+// let ccMint, ccMintBump;
+// let ccb0Mint, ccb0MintBump;
+// let ccb1Mint, ccb1MintBump;
+// let ccs0Mint, ccs0MintBump;
+// let owner_cc_ata,owner_ccb0_ata,owner_ccb1_ata,owner_ccs0_ata;
+// let cc_ata,ccb0_ata,ccb1_ata,ccs0_ata;
 
 class AppHeader extends React.Component {
   render() {
@@ -111,57 +131,58 @@ function App() {
   const wallet = useWallet();
   const { signTransaction } = useWallet();
 
-  async function initAddrs() {
-    const connection = new Connection(network, opts.preflightCommitment);
-    const provider = new AnchorProvider(
-      connection, wallet, opts.preflightCommitment,
-    );
-    const program = new Program(idl, programID, provider);
-
-    [ mintAuth, mintAuthBump ] = await web3.PublicKey.findProgramAddress(
+  async function initAddrs(provider,program) {
+    console.log('initAddrs');
+    [ gAddrs.mintAuth, gAddrs.mintAuthBump ]
+      = await web3.PublicKey.findProgramAddress(
         [ Buffer.from("mint_auth_") ], program.programId );
+        console.log('mintAuth ' + gAddrs.mintAuth);
 
-    [ ccMint, ccMintBump ] = await web3.PublicKey.findProgramAddress(
+    [ gAddrs.ccMint, gAddrs.ccMintBump ]
+      = await web3.PublicKey.findProgramAddress(
         [ Buffer.from("cc_mint_") ], program.programId );
-    [ ccb0Mint, ccb0MintBump ] = await web3.PublicKey.findProgramAddress(
+    [ gAddrs.ccb0Mint, gAddrs.ccb0MintBump ]
+      = await web3.PublicKey.findProgramAddress(
         [ Buffer.from("ccb0_mint_") ], program.programId );
-    [ ccb1Mint, ccb1MintBump ] = await web3.PublicKey.findProgramAddress(
+    [ gAddrs.ccb1Mint, gAddrs.ccb1MintBump ]
+      = await web3.PublicKey.findProgramAddress(
         [ Buffer.from("ccb1_mint_") ], program.programId );
-    [ ccs0Mint, ccs0MintBump ] = await web3.PublicKey.findProgramAddress(
+    [ gAddrs.ccs0Mint, gAddrs.ccs0MintBump ]
+      = await web3.PublicKey.findProgramAddress(
         [ Buffer.from("ccs0_mint_") ], program.programId );
 
-    owner_cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
+    gAddrs.owner_cc_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccMint,
       owner: provider.wallet.publicKey
     });
-    owner_ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
+    gAddrs.owner_ccb0_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccb0Mint,
       owner: provider.wallet.publicKey
     });
-    owner_ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
+    gAddrs.owner_ccb1_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccb1Mint,
       owner: provider.wallet.publicKey
     });
-    owner_ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
+    gAddrs.owner_ccs0_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccs0Mint,
       owner: provider.wallet.publicKey
     });
 
-    cc_ata = await utils.token.associatedAddress({
-      mint: ccMint,
-      owner: mintAuth
+    gAddrs.cc_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccMint,
+      owner: gAddrs.mintAuth
     });
-    ccb0_ata = await utils.token.associatedAddress({
-      mint: ccb0Mint,
-      owner: mintAuth
+    gAddrs.ccb0_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccb0Mint,
+      owner: gAddrs.mintAuth
     });
-    ccb1_ata = await utils.token.associatedAddress({
-      mint: ccb1Mint,
-      owner: mintAuth
+    gAddrs.ccb1_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccb1Mint,
+      owner: gAddrs.mintAuth
     });
-    ccs0_ata = await utils.token.associatedAddress({
-      mint: ccs0Mint,
-      owner: mintAuth
+    gAddrs.ccs0_ata = await utils.token.associatedAddress({
+      mint: gAddrs.ccs0Mint,
+      owner: gAddrs.mintAuth
     });
   }
 
@@ -180,9 +201,9 @@ function App() {
   async function doFetchState() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
     try {
-      const state = await program.account.mintAuth.fetch(mintAuth);
+      const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
       // console.log('state: ', state);
       setTimestamp(state.timestamp.toString());
       setPstate(state.maturityState.toString());
@@ -201,11 +222,11 @@ function App() {
     );
     const program = new Program(idl, programID, provider);
     let ccbA = 0;
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     // cc bal
     try {
-      const ccAccount = await getAccount(connection, owner_cc_ata);
+      const ccAccount = await getAccount(connection, gAddrs.owner_cc_ata);
       setCcBal(ccAccount.amount.toString());
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -214,9 +235,9 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            owner_cc_ata,
+            gAddrs.owner_cc_ata,
             provider.wallet.publicKey,
-            ccMint
+            gAddrs.ccMint
           ));
           // const connection = new Connection(network, opts.preflightCommitment);
           tx.feePayer = provider.wallet.publicKey;
@@ -226,7 +247,7 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccAccount = await getAccount(connection, owner_cc_ata);
+          const ccAccount = await getAccount(connection, gAddrs.owner_cc_ata);
           setCcBal(ccAccount.amount.toString());
         } catch {}
       }
@@ -234,7 +255,7 @@ function App() {
 
     // ccb bal
     try {
-      const ccb0Account = await getAccount(connection, owner_ccb0_ata);
+      const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
       setCcb0Bal(ccb0Account.amount.toString());
       ccbA += Number(ccb0Account.amount);
     } catch (err) {
@@ -244,9 +265,9 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            owner_ccb0_ata,
+            gAddrs.owner_ccb0_ata,
             provider.wallet.publicKey,
-            ccb0Mint
+            gAddrs.ccb0Mint
           ));
           tx.feePayer = provider.wallet.publicKey;
           const blockHash = await provider.connection.getRecentBlockhash();
@@ -255,7 +276,7 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccb0Account = await getAccount(connection, owner_ccb0_ata);
+          const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
           setCcb0Bal(ccb0Account.amount.toString());
           ccbA += Number(ccb0Account.amount);
         } catch {}
@@ -263,7 +284,7 @@ function App() {
     }
 
     try {
-      const ccb1Account = await getAccount(connection, owner_ccb1_ata);
+      const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
       setCcb1Bal(ccb1Account.amount.toString());
       ccbA += Number(ccb1Account.amount);
     } catch (err) {
@@ -273,9 +294,9 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            owner_ccb1_ata,
+            gAddrs.owner_ccb1_ata,
             provider.wallet.publicKey,
-            ccb1Mint
+            gAddrs.ccb1Mint
           ));
           tx.feePayer = provider.wallet.publicKey;
           const blockHash = await provider.connection.getRecentBlockhash();
@@ -284,7 +305,7 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccb1Account = await getAccount(connection, owner_ccb1_ata);
+          const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
           setCcb1Bal(ccb1Account.amount.toString());
           ccbA += Number(ccb1Account.amount);
         } catch {}
@@ -293,7 +314,7 @@ function App() {
 
     // ccs bal
     try {
-      const ccs0Account = await getAccount(connection, owner_ccs0_ata);
+      const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
       setCcsBal(ccs0Account.amount.toString())
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -302,9 +323,9 @@ function App() {
           const tx = new Transaction();
           tx.add(createAssociatedTokenAccountInstruction(
             provider.wallet.publicKey,
-            owner_ccs0_ata,
+            gAddrs.owner_ccs0_ata,
             provider.wallet.publicKey,
-            ccs0Mint
+            gAddrs.ccs0Mint
           ));
           tx.feePayer = provider.wallet.publicKey;
           const blockHash = await provider.connection.getRecentBlockhash();
@@ -313,7 +334,7 @@ function App() {
           await provider.connection.sendRawTransaction(signed.serialize());
           await sleep.sleep(2);
 
-          const ccs0Account = await getAccount(connection, owner_ccs0_ata);
+          const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
           setCcsBal(ccs0Account.amount.toString())
         } catch {}
       }
@@ -337,10 +358,10 @@ function App() {
       connection, wallet, opts.preflightCommitment,
     );
     const program = new Program(idl, programID, provider);
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
     // cc bal
     try {
-      const ccAccount = await getAccount(connection, cc_ata);
+      const ccAccount = await getAccount(connection, gAddrs.cc_ata);
       setCcProgBal(ccAccount.amount.toString());
     } catch { }
   }
@@ -354,23 +375,23 @@ function App() {
     );
     const program = new Program(idl, programID, provider);
     let ccbA = 0;
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     // ccb bal
     try {
-      const ccb0Account = await getAccount(connection, ccb0_ata);
+      const ccb0Account = await getAccount(connection, gAddrs.ccb0_ata);
       ccbA += Number(ccb0Account.amount);
     } catch { }
 
     try {
-      const ccb1Account = await getAccount(connection, ccb1_ata);
+      const ccb1Account = await getAccount(connection, gAddrs.ccb1_ata);
       ccbA += Number(ccb1Account.amount);
     } catch { }
     setCcbProgBal(ccbA.toString());
 
     // ccs bal
     try {
-      const ccs0Account = await getAccount(connection, ccs0_ata);
+      const ccs0Account = await getAccount(connection, gAddrs.ccs0_ata);
       setCcsProgBal(ccs0Account.amount.toString())
     } catch { }
   }
@@ -378,29 +399,29 @@ function App() {
   async function doBuyBonds() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     if (pstate === '0') {
       try {
         await program.methods.buyBonds0(
           new BN(buyBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb0MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb0MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb0MintAccount: ccb0Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb0MintAccount: gAddrs.ccb0Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcb0Account: owner_ccb0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcb0Account: gAddrs.owner_ccb0_ata,
 
-          ccAccount: cc_ata,
-          ccb0Account: ccb0_ata,
-          ccs0Account: ccs0_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb0Account: gAddrs.ccb0_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -410,22 +431,22 @@ function App() {
       try {
         await program.methods.buyBonds1(
           new BN(buyBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb1MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb1MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb1MintAccount: ccb1Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb1MintAccount: gAddrs.ccb1Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcb1Account: owner_ccb1_ata,
-          ccAccount: cc_ata,
-          ccb1Account: ccb1_ata,
-          ccs0Account: ccs0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcb1Account: gAddrs.owner_ccb1_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb1Account: gAddrs.ccb1_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -436,29 +457,29 @@ function App() {
   async function doSellBonds() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     if (pstate === '0') {
       try {
         await program.methods.sellBonds0(
           new BN(sellBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb0MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb0MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb0MintAccount: ccb0Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb0MintAccount: gAddrs.ccb0Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcb0Account: owner_ccb0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcb0Account: gAddrs.owner_ccb0_ata,
 
-          ccAccount: cc_ata,
-          ccb0Account: ccb0_ata,
-          ccs0Account: ccs0_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb0Account: gAddrs.ccb0_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -468,22 +489,22 @@ function App() {
       try {
         await program.methods.sellBonds1(
           new BN(sellBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb1MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb1MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb1MintAccount: ccb1Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb1MintAccount: gAddrs.ccb1Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcb1Account: owner_ccb1_ata,
-          ccAccount: cc_ata,
-          ccb1Account: ccb1_ata,
-          ccs0Account: ccs0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcb1Account: gAddrs.owner_ccb1_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb1Account: gAddrs.ccb1_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -494,29 +515,29 @@ function App() {
   async function doBuyShorts() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     if (pstate === '0') {
       try {
         await program.methods.buyShorts0(
           new BN(buyBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb0MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb0MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb0MintAccount: ccb0Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb0MintAccount: gAddrs.ccb0Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcs0Account: owner_ccs0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcs0Account: gAddrs.owner_ccs0_ata,
 
-          ccAccount: cc_ata,
-          ccb0Account: ccb0_ata,
-          ccs0Account: ccs0_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb0Account: gAddrs.ccb0_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -526,22 +547,22 @@ function App() {
       try {
         await program.methods.buyShorts1(
           new BN(buyBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb1MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb1MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb1MintAccount: ccb1Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb1MintAccount: gAddrs.ccb1Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcs0Account: owner_ccs0_ata,
-          ccAccount: cc_ata,
-          ccb1Account: ccb1_ata,
-          ccs0Account: ccs0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcs0Account: gAddrs.owner_ccs0_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb1Account: gAddrs.ccb1_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -552,29 +573,29 @@ function App() {
   async function doSellShorts() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     if (pstate === '0') {
       try {
         await program.methods.sellShorts0(
           new BN(sellBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb0MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb0MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb0MintAccount: ccb0Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb0MintAccount: gAddrs.ccb0Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcb0Account: owner_ccs0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcb0Account: gAddrs.owner_ccs0_ata,
 
-          ccAccount: cc_ata,
-          ccb0Account: ccb0_ata,
-          ccs0Account: ccs0_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb0Account: gAddrs.ccb0_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -584,23 +605,23 @@ function App() {
       try {
         await program.methods.sellShorts1(
           new BN(sellBondsAmount),
-          mintAuthBump,
-          ccMintBump,
-          ccb1MintBump,
-          ccs0MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb1MintBump,
+          gAddrs.ccs0MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb1MintAccount: ccb1Mint,
-          ccs0MintAccount: ccs0Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb1MintAccount: gAddrs.ccb1Mint,
+          ccs0MintAccount: gAddrs.ccs0Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcs0Account: owner_ccs0_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcs0Account: gAddrs.owner_ccs0_ata,
 
-          ccAccount: cc_ata,
-          ccb1Account: ccb1_ata,
-          ccs0Account: ccs0_ata,
+          ccAccount: gAddrs.cc_ata,
+          ccb1Account: gAddrs.ccb1_ata,
+          ccs0Account: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -612,25 +633,25 @@ function App() {
   async function doRedeemBonds() {
     const provider = await getProvider()
     const program = new Program(idl, programID, provider);
-    await initAddrs();
+    if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
     if (pstate === '0') {
       try {
         await program.methods.redeemBonds1(
-          mintAuthBump,
-          ccMintBump,
-          ccb0MintBump,
-          ccb1MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb0MintBump,
+          gAddrs.ccb1MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb0MintAccount: ccb0Mint,
-          ccb1MintAccount: ccb1Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb0MintAccount: gAddrs.ccb0Mint,
+          ccb1MintAccount: gAddrs.ccb1Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcb0Account: owner_ccb0_ata,
-          ownerCcb1Account: owner_ccb1_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcb0Account: gAddrs.owner_ccb0_ata,
+          ownerCcb1Account: gAddrs.owner_ccb1_ata,
 
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
@@ -640,20 +661,20 @@ function App() {
     if (pstate === '2') {
       try {
         await program.methods.redeemBonds0(
-          mintAuthBump,
-          ccMintBump,
-          ccb0MintBump,
-          ccb1MintBump,
+          gAddrs.mintAuthBump,
+          gAddrs.ccMintBump,
+          gAddrs.ccb0MintBump,
+          gAddrs.ccb1MintBump,
         ).accounts({
-          mintAuthority: mintAuth,
+          mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: ccMint,
-          ccb0MintAccount: ccb0Mint,
-          ccb1MintAccount: ccb1Mint,
+          ccMintAccount: gAddrs.ccMint,
+          ccb0MintAccount: gAddrs.ccb0Mint,
+          ccb1MintAccount: gAddrs.ccb1Mint,
 
-          ownerCcAccount: owner_cc_ata,
-          ownerCcb0Account: owner_ccb0_ata,
-          ownerCcb1Account: owner_ccb1_ata,
+          ownerCcAccount: gAddrs.owner_cc_ata,
+          ownerCcb0Account: gAddrs.owner_ccb0_ata,
+          ownerCcb1Account: gAddrs.owner_ccb1_ata,
 
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
