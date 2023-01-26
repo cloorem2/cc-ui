@@ -119,20 +119,6 @@ class AppHeader extends React.Component {
 
 function App() {
   const [redraw, setRedraw] = useState(null);
-  // const [value, setValue] = useState(null);
-  // state vars
-  // const [ima0, setIma0] = useState(null);
-  // const [tleft, setTleft] = useState(null);
-  // const [redeem, setRedeem] = useState('');
-
-  // const [ccBal, setCcBal] = useState(null);
-  // const [ccsBal, setCcsBal] = useState(null);
-  // const [ccb0Bal, setCcb0Bal] = useState(null);
-  // const [ccb1Bal, setCcb1Bal] = useState(null);
-
-  // const [ccProgBal, setCcProgBal] = useState(null);
-  // const [ccsProgBal, setCcsProgBal] = useState(null);
-  // const [ccbProgBal, setCcbProgBal] = useState(null);
 
   const [buyBondsAmount, setBuyBondsAmount] = useState('');
   const [sellBondsAmount, setSellBondsAmount] = useState('');
@@ -146,7 +132,7 @@ function App() {
     [ gAddrs.mintAuth, gAddrs.mintAuthBump ]
       = await web3.PublicKey.findProgramAddress(
         [ Buffer.from("mint_auth_") ], program.programId );
-        console.log('mintAuth ' + gAddrs.mintAuth);
+        console.log('mintAuth ',gAddrs.mintAuth);
 
     [ gAddrs.ccMint, gAddrs.ccMintBump ]
       = await web3.PublicKey.findProgramAddress(
@@ -214,9 +200,7 @@ function App() {
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
     try {
       const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
-      // setPstate(state.maturityState.toString());
       gState.pstate = Number(state.maturityState);
-      // setIma0(state.ima0.toString());
       gState.ima0 = Number(state.ima0);
       gState.timestamp = Number(state.timestamp);
       doUpdateClock();
@@ -238,7 +222,6 @@ function App() {
     // cc bal
     try {
       const ccAccount = await getAccount(connection, gAddrs.owner_cc_ata);
-      // setCcBal(ccAccount.amount.toString());
       gState.ccBal = Number(ccAccount.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -260,7 +243,6 @@ function App() {
           await sleep.sleep(2);
 
           const ccAccount = await getAccount(connection, gAddrs.owner_cc_ata);
-          // setCcBal(ccAccount.amount.toString());
           gState.ccBal = Number(ccAccount.amount);
         } catch {}
       }
@@ -269,7 +251,6 @@ function App() {
     // ccb bal
     try {
       const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
-      // setCcb0Bal(ccb0Account.amount.toString());
       gState.ccb0Bal = Number(ccb0Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -290,7 +271,6 @@ function App() {
           await sleep.sleep(2);
 
           const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
-          // setCcb0Bal(ccb0Account.amount.toString());
           gState.ccb0Bal = Number(ccb0Account.amount);
         } catch {}
       }
@@ -298,7 +278,6 @@ function App() {
 
     try {
       const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
-      // setCcb1Bal(ccb1Account.amount.toString());
       gState.ccb1Bal = Number(ccb1Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -319,7 +298,6 @@ function App() {
           await sleep.sleep(2);
 
           const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
-          // setCcb1Bal(ccb1Account.amount.toString());
           gState.ccb1Bal = Number(ccb1Account.amount);
         } catch {}
       }
@@ -328,7 +306,6 @@ function App() {
     // ccs bal
     try {
       const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
-      // setCcsBal(ccs0Account.amount.toString())
       gState.ccs0Bal = Number(ccs0Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
@@ -349,7 +326,6 @@ function App() {
           await sleep.sleep(2);
 
           const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
-          // setCcsBal(ccs0Account.amount.toString())
           gState.ccs0Bal = Number(ccs0Account.amount);
         } catch {}
       }
@@ -366,7 +342,6 @@ function App() {
     // cc bal
     try {
       const ccAccount = await getAccount(connection, gAddrs.cc_ata);
-      // setCcProgBal(ccAccount.amount.toString());
       gState.ccProgBal = Number(ccAccount.amount);
     } catch { }
   }
@@ -392,13 +367,11 @@ function App() {
       const ccb1Account = await getAccount(connection, gAddrs.ccb1_ata);
       ccbA += Number(ccb1Account.amount);
     } catch { }
-    // setCcbProgBal(ccbA.toString());
     gState.ccbProgBal = ccbA;
 
     // ccs bal
     try {
       const ccs0Account = await getAccount(connection, gAddrs.ccs0_ata);
-      // setCcsProgBal(ccs0Account.amount.toString())
       gState.ccsProgBal = Number(ccs0Account.amount);
     } catch { }
   }
@@ -419,16 +392,16 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb0MintAccount: gAddrs.ccb0Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb0Mint: gAddrs.ccb0Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcb0Account: gAddrs.owner_ccb0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcb0Token: gAddrs.owner_ccb0_ata,
 
-          ccAccount: gAddrs.cc_ata,
-          ccb0Account: gAddrs.ccb0_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb0Token: gAddrs.ccb0_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -445,15 +418,15 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb1MintAccount: gAddrs.ccb1Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb1Mint: gAddrs.ccb1Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcb1Account: gAddrs.owner_ccb1_ata,
-          ccAccount: gAddrs.cc_ata,
-          ccb1Account: gAddrs.ccb1_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcb1Token: gAddrs.owner_ccb1_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb1Token: gAddrs.ccb1_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -477,16 +450,16 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb0MintAccount: gAddrs.ccb0Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb0Mint: gAddrs.ccb0Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcb0Account: gAddrs.owner_ccb0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcb0Token: gAddrs.owner_ccb0_ata,
 
-          ccAccount: gAddrs.cc_ata,
-          ccb0Account: gAddrs.ccb0_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb0Token: gAddrs.ccb0_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -503,15 +476,15 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb1MintAccount: gAddrs.ccb1Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb1Mint: gAddrs.ccb1Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcb1Account: gAddrs.owner_ccb1_ata,
-          ccAccount: gAddrs.cc_ata,
-          ccb1Account: gAddrs.ccb1_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcb1Token: gAddrs.owner_ccb1_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb1Token: gAddrs.ccb1_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -535,16 +508,16 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb0MintAccount: gAddrs.ccb0Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb0Mint: gAddrs.ccb0Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcs0Account: gAddrs.owner_ccs0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcs0Token: gAddrs.owner_ccs0_ata,
 
-          ccAccount: gAddrs.cc_ata,
-          ccb0Account: gAddrs.ccb0_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb0Token: gAddrs.ccb0_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -561,15 +534,15 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb1MintAccount: gAddrs.ccb1Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb1Mint: gAddrs.ccb1Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcs0Account: gAddrs.owner_ccs0_ata,
-          ccAccount: gAddrs.cc_ata,
-          ccb1Account: gAddrs.ccb1_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcs0Token: gAddrs.owner_ccs0_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb1Token: gAddrs.ccb1_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -593,16 +566,16 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb0MintAccount: gAddrs.ccb0Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb0Mint: gAddrs.ccb0Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcb0Account: gAddrs.owner_ccs0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcb0Token: gAddrs.owner_ccs0_ata,
 
-          ccAccount: gAddrs.cc_ata,
-          ccb0Account: gAddrs.ccb0_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb0Token: gAddrs.ccb0_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -619,16 +592,16 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb1MintAccount: gAddrs.ccb1Mint,
-          ccs0MintAccount: gAddrs.ccs0Mint,
+          ccMint: gAddrs.ccMint,
+          ccb1Mint: gAddrs.ccb1Mint,
+          ccs0Mint: gAddrs.ccs0Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcs0Account: gAddrs.owner_ccs0_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcs0Token: gAddrs.owner_ccs0_ata,
 
-          ccAccount: gAddrs.cc_ata,
-          ccb1Account: gAddrs.ccb1_ata,
-          ccs0Account: gAddrs.ccs0_ata,
+          ccToken: gAddrs.cc_ata,
+          ccb1Token: gAddrs.ccb1_ata,
+          ccs0Token: gAddrs.ccs0_ata,
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
@@ -652,13 +625,13 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb0MintAccount: gAddrs.ccb0Mint,
-          ccb1MintAccount: gAddrs.ccb1Mint,
+          ccMint: gAddrs.ccMint,
+          ccb0Mint: gAddrs.ccb0Mint,
+          ccb1Mint: gAddrs.ccb1Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcb0Account: gAddrs.owner_ccb0_ata,
-          ownerCcb1Account: gAddrs.owner_ccb1_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcb0Token: gAddrs.owner_ccb0_ata,
+          ownerCcb1Token: gAddrs.owner_ccb1_ata,
 
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
@@ -675,13 +648,13 @@ function App() {
         ).accounts({
           mintAuthority: gAddrs.mintAuth,
 
-          ccMintAccount: gAddrs.ccMint,
-          ccb0MintAccount: gAddrs.ccb0Mint,
-          ccb1MintAccount: gAddrs.ccb1Mint,
+          ccMint: gAddrs.ccMint,
+          ccb0Mint: gAddrs.ccb0Mint,
+          ccb1Mint: gAddrs.ccb1Mint,
 
-          ownerCcAccount: gAddrs.owner_cc_ata,
-          ownerCcb0Account: gAddrs.owner_ccb0_ata,
-          ownerCcb1Account: gAddrs.owner_ccb1_ata,
+          ownerCcToken: gAddrs.owner_cc_ata,
+          ownerCcb0Token: gAddrs.owner_ccb0_ata,
+          ownerCcb1Token: gAddrs.owner_ccb1_ata,
 
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
@@ -717,7 +690,6 @@ function App() {
     } else {
       ttleft = tstr;
     }
-    // setTleft(ttleft);
     gState.tleft = ttleft;
     setRedraw(gState.timestamp);
   }
@@ -729,30 +701,18 @@ function App() {
     await getOwnerBalances();
     if (gState.pstate === 0) {
       if (gState.redeem === 0) {
-        // if (Number(ccb1Bal) > 0) setRedeem('1');
-        // if (Number(ccb1Bal) > 0) gState.redeem = 1;
         if (gState.ccb1Bal > 0) gState.redeem = 1;
-      // } else if (Number(ccb1Bal) === 0) {
       } else if (gState.ccb1Bal === 0) {
-        // setRedeem('');
         gState.redeem = 0;
       }
     }
     if (gState.pstate === 2) {
       if (gState.redeem === 0) {
-        // if (Number(ccb0Bal) > 0) setRedeem('1');
-        // if (Number(ccb0Bal) > 0) gState.redeem = 1;
         if (gState.ccb0Bal > 0) gState.redeem = 1;
-        console.log('pstate ',gState.pstate,' redeem ',gState.redeem,
-          ' ccb0Bal ',gState.ccb0Bal);
-      // } else if (Number(ccb0Bal) === 0) {
       } else if (gState.ccb0Bal === 0) {
-        // setRedeem('');
         gState.redeem = 0;
       }
     }
-    console.log('doMultiple ' + gState.pstate +
-      ' redeem ',gState.redeem,' ccb0Bal ',gState.ccb0Bal);
   }
 
   if (!wallet.connected) {
