@@ -99,7 +99,7 @@ const gState = {
   ccsProgBal: 0,
   ccbProgBal: 0,
 }
-let fetchTimer,clockTimer;
+let fetchTimer,clockTimer,otimestamp = 0;
 
 class AppHeader extends React.Component {
   render() {
@@ -202,8 +202,11 @@ function App() {
       const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
       gState.pstate = Number(state.maturityState);
       gState.ima0 = Number(state.ima0);
-      gState.timestamp = Number(state.timestamp);
-      doUpdateClock();
+      if (state.timestamp != otimestamp) {
+        gState.timestamp = Number(state.timestamp);
+        otimestamp = Number(state.timestamp);
+        doUpdateClock();
+      }
     } catch (err) {
       console.log("Transaction error: ", err);
     }
@@ -500,7 +503,7 @@ function App() {
     if (gState.pstate === 0) {
       try {
         await program.methods.buyShorts0(
-          new BN(buyBondsAmount),
+          new BN(buyShortsAmount),
           gAddrs.mintAuthBump,
           gAddrs.ccMintBump,
           gAddrs.ccb0MintBump,
@@ -526,7 +529,7 @@ function App() {
     if (gState.pstate === 2) {
       try {
         await program.methods.buyShorts1(
-          new BN(buyBondsAmount),
+          new BN(buyShortsAmount),
           gAddrs.mintAuthBump,
           gAddrs.ccMintBump,
           gAddrs.ccb1MintBump,
@@ -558,7 +561,7 @@ function App() {
     if (gState.pstate === 0) {
       try {
         await program.methods.sellShorts0(
-          new BN(sellBondsAmount),
+          new BN(sellShortsAmount),
           gAddrs.mintAuthBump,
           gAddrs.ccMintBump,
           gAddrs.ccb0MintBump,
@@ -584,7 +587,7 @@ function App() {
     if (gState.pstate === 2) {
       try {
         await program.methods.sellShorts1(
-          new BN(sellBondsAmount),
+          new BN(sellShortsAmount),
           gAddrs.mintAuthBump,
           gAddrs.ccMintBump,
           gAddrs.ccb1MintBump,
