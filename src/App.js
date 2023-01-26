@@ -333,7 +333,8 @@ function App() {
       }
     }
 
-    while (!pstate) await sleep.sleep(1);
+    // this didn't help
+    // while (!pstate) await sleep.sleep(1);
     if (pstate === '0') {
       if (Number(ccb1Bal) > 0) {
         setRedeem('1');
@@ -715,8 +716,8 @@ function App() {
   async function doOnce() {
     await doFetchState();
     await getProgCcBalance();
-    await getOwnerBalances();
     await getProgBalances();
+    await getOwnerBalances();
   }
 
   if (!wallet.connected) {
@@ -731,6 +732,9 @@ function App() {
       fetchTimer = setInterval(doMultiple,10000);
       doOnce();
     }
+    // redeem state didn't catch, we had a ccb0Bal, ccbProgBal was blank
+    // so we'll try this
+    if (!ccbProgBal) { doOnce(); }
     if (!clockTimer && timestamp) {
       clockTimer = setInterval(() => {
         timestamp = (Number(timestamp) + 1).toString();
