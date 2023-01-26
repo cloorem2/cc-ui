@@ -335,6 +335,7 @@ function App() {
 
     // this didn't help
     // while (!pstate) await sleep.sleep(1);
+    /*
     if (pstate === '0') {
       if (Number(ccb1Bal) > 0) {
         setRedeem('1');
@@ -345,6 +346,7 @@ function App() {
         setRedeem('1');
       } else { setRedeem(''); }
     }
+    */
   }
 
   async function getProgCcBalance() {
@@ -711,6 +713,20 @@ function App() {
   async function doMultiple() {
     await doFetchState();
     await getProgCcBalance();
+    if (pstate === '0') {
+      if (!redeem) {
+        if (Number(ccb1Bal) > 0) setRedeem('1');
+      } else if (Number(ccb1Bal) == 0) {
+        setRedeem('');
+      }
+    }
+    if (pstate === '2') {
+      if (!redeem) {
+        if (Number(ccb0Bal) > 0) setRedeem('1');
+      } else if (Number(ccb0Bal) == 0) {
+        setRedeem('');
+      }
+    }
   }
 
   async function doOnce() {
