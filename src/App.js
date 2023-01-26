@@ -333,6 +333,7 @@ function App() {
       }
     }
 
+    while (!pstate) await sleep.sleep(1);
     if (pstate === '0') {
       if (Number(ccb1Bal) > 0) {
         setRedeem('1');
