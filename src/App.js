@@ -309,7 +309,7 @@ function App() {
     // ccs bal
     try {
       const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
-      gState.ccs0Bal = Number(ccs0Account.amount);
+      gState.ccsBal = Number(ccs0Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
         || err.message === 'TokenInvalidAccountOwnerError') {
@@ -329,7 +329,7 @@ function App() {
           await sleep.sleep(2);
 
           const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
-          gState.ccs0Bal = Number(ccs0Account.amount);
+          gState.ccsBal = Number(ccs0Account.amount);
         } catch {}
       }
     }
