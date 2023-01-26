@@ -54,12 +54,12 @@ const opts = {
   preflightCommitment: "processed"
 }
 const programID = new PublicKey(idl.metadata.address);
-const ccMintConst = "5jGmQSUMvQ5dKrLXuh3oUjczWWLefUEQHX3EGKXnLjjS";
-const ccb0MintConst = "GVWmAjaond6PrChG4bPZRWRbQAs2gwFbHE5t3NfUhbft";
-const ccb1MintConst = "7c72g38GCvGyNqBL7zEdQS7nHq9DfiRAUQcRiSDH5FDx";
-const ccs0MintConst = "EBj4FTsN2BHbNtbctvzCX96JS3ksB8z1ukWcZQjqCujr";
+// const ccMintConst = "5jGmQSUMvQ5dKrLXuh3oUjczWWLefUEQHX3EGKXnLjjS";
+// const ccb0MintConst = "GVWmAjaond6PrChG4bPZRWRbQAs2gwFbHE5t3NfUhbft";
+// const ccb1MintConst = "7c72g38GCvGyNqBL7zEdQS7nHq9DfiRAUQcRiSDH5FDx";
+// const ccs0MintConst = "EBj4FTsN2BHbNtbctvzCX96JS3ksB8z1ukWcZQjqCujr";
 
-const mintAuthConst = "5Ju8Dax7SgVsygfwkkuDX1eoJHwCQFgjpiCSctjrPZoC";
+// const mintAuthConst = "5Ju8Dax7SgVsygfwkkuDX1eoJHwCQFgjpiCSctjrPZoC";
 
 const network = clusterApiUrl('devnet');
 
@@ -84,7 +84,6 @@ const gAddrs = {
   ccs0_ata: "",
 }
 let fetchTimer,clockTimer,timestamp;
-const nspw = 60*60*24*7;
 
 class AppHeader extends React.Component {
   render() {
@@ -108,7 +107,7 @@ function App() {
   const [ima0, setIma0] = useState(null);
   const [pstate, setPstate] = useState(null);
   const [tleft, setTleft] = useState(null);
-  const [redeem, setRedeem] = useState('');
+  const [redeem, setRedeem] = useState(null);
 
   const [ccBal, setCcBal] = useState(null);
   const [ccsBal, setCcsBal] = useState(null);
@@ -714,17 +713,17 @@ function App() {
     await doFetchState();
     await getProgCcBalance();
     if (pstate === '0') {
-      if (!redeem) {
+      if (redeem === null) {
         if (Number(ccb1Bal) > 0) setRedeem('1');
       } else if (Number(ccb1Bal) === 0) {
-        setRedeem('');
+        setRedeem(null);
       }
     }
     if (pstate === '2') {
-      if (!redeem) {
+      if (redeem === null) {
         if (Number(ccb0Bal) > 0) setRedeem('1');
       } else if (Number(ccb0Bal) === 0) {
-        setRedeem('');
+        setRedeem(null);
       }
     }
   }
@@ -748,13 +747,10 @@ function App() {
       fetchTimer = setInterval(doMultiple,10000);
       doOnce();
     }
-    // redeem state didn't catch, we had a ccb0Bal, ccbProgBal was blank
-    // so we'll try this
     if (!ccbProgBal) { doOnce(); }
     if (!clockTimer && timestamp) {
       clockTimer = setInterval(() => {
         timestamp = (Number(timestamp) + 1).toString();
-        console.log('timestamp ' + timestamp);
         doUpdateClock();
       },1000);
     }
@@ -815,10 +811,10 @@ function App() {
             <div className="data-row">CCS {ccsProgBal}</div>
             <div className="small-space-row"></div>
             <div className="data-row">Mints</div>
-            <div className="data-row">CC {ccMintConst}</div>
-            <div className="data-row">CCB0 {ccb0MintConst}</div>
-            <div className="data-row">CCB1 {ccb1MintConst}</div>
-            <div className="data-row">CCS0 {ccs0MintConst}</div>
+            <div className="data-row">CC {gAddrs.ccMint.toString()}</div>
+            <div className="data-row">CCB0 {gAddrs.ccb0Mint.toString()}</div>
+            <div className="data-row">CCB1 {gAddrs.ccb1Mint.toString()}</div>
+            <div className="data-row">CCS0 {gAddrs.ccs0Mint.toString()}</div>
           </div>
           <div className="App-right">
             <div className="small-space-row"></div>
@@ -828,12 +824,11 @@ function App() {
               <h3>CCS {ccsBal}</h3>
               <div className="space-row"></div>
               {
-                redeem ? (
+                redeem === null ? (
+                  <button className="time-button">Maturity in {tleft}</button>
+                ) : (
                   <button className="emergency-button"
                     onClick={doRedeemBonds}>Redeem!</button>
-                ) : (
-                  <button className="time-button">Maturity in {tleft}</button>
-
                 )
               }
 
