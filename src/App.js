@@ -716,14 +716,14 @@ function App() {
     if (pstate === '0') {
       if (!redeem) {
         if (Number(ccb1Bal) > 0) setRedeem('1');
-      } else if (Number(ccb1Bal) == 0) {
+      } else if (Number(ccb1Bal) === 0) {
         setRedeem('');
       }
     }
     if (pstate === '2') {
       if (!redeem) {
         if (Number(ccb0Bal) > 0) setRedeem('1');
-      } else if (Number(ccb0Bal) == 0) {
+      } else if (Number(ccb0Bal) === 0) {
         setRedeem('');
       }
     }
