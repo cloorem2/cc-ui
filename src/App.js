@@ -83,7 +83,23 @@ const gAddrs = {
   ccb1_ata: "",
   ccs0_ata: "",
 }
-let fetchTimer,clockTimer,timestamp;
+const gState = {
+  timestamp: 0,
+  ima0: 0,
+  pstate: 0,
+  tleft: 0,
+  redeem: 0,
+
+  ccBal: 0,
+  ccsBal: 0,
+  ccb0Bal: 0,
+  ccb1Bal: 0,
+
+  ccProgBal: 0,
+  ccsProgBal: 0,
+  ccbProgBal: 0,
+}
+let fetchTimer,clockTimer;
 
 class AppHeader extends React.Component {
   render() {
@@ -102,21 +118,21 @@ class AppHeader extends React.Component {
 }
 
 function App() {
+  const [redraw, setRedraw] = useState(null);
   // const [value, setValue] = useState(null);
   // state vars
-  const [ima0, setIma0] = useState(null);
-  const [pstate, setPstate] = useState(null);
-  const [tleft, setTleft] = useState(null);
-  const [redeem, setRedeem] = useState(null);
+  // const [ima0, setIma0] = useState(null);
+  // const [tleft, setTleft] = useState(null);
+  // const [redeem, setRedeem] = useState('');
 
-  const [ccBal, setCcBal] = useState(null);
-  const [ccsBal, setCcsBal] = useState(null);
-  const [ccb0Bal, setCcb0Bal] = useState(null);
-  const [ccb1Bal, setCcb1Bal] = useState(null);
+  // const [ccBal, setCcBal] = useState(null);
+  // const [ccsBal, setCcsBal] = useState(null);
+  // const [ccb0Bal, setCcb0Bal] = useState(null);
+  // const [ccb1Bal, setCcb1Bal] = useState(null);
 
-  const [ccProgBal, setCcProgBal] = useState(null);
-  const [ccsProgBal, setCcsProgBal] = useState(null);
-  const [ccbProgBal, setCcbProgBal] = useState(null);
+  // const [ccProgBal, setCcProgBal] = useState(null);
+  // const [ccsProgBal, setCcsProgBal] = useState(null);
+  // const [ccbProgBal, setCcbProgBal] = useState(null);
 
   const [buyBondsAmount, setBuyBondsAmount] = useState('');
   const [sellBondsAmount, setSellBondsAmount] = useState('');
@@ -198,13 +214,12 @@ function App() {
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
     try {
       const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
-      // console.log('state: ', state);
-      // if (!timestamp) {
-        timestamp = state.timestamp.toString();
-        doUpdateClock();
-      // }
-      setPstate(state.maturityState.toString());
-      setIma0(state.ima0.toString());
+      // setPstate(state.maturityState.toString());
+      gState.pstate = Number(state.maturityState);
+      // setIma0(state.ima0.toString());
+      gState.ima0 = Number(state.ima0);
+      gState.timestamp = Number(state.timestamp);
+      doUpdateClock();
     } catch (err) {
       console.log("Transaction error: ", err);
     }
@@ -223,7 +238,8 @@ function App() {
     // cc bal
     try {
       const ccAccount = await getAccount(connection, gAddrs.owner_cc_ata);
-      setCcBal(ccAccount.amount.toString());
+      // setCcBal(ccAccount.amount.toString());
+      gState.ccBal = Number(ccAccount.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
         || err.message === 'TokenInvalidAccountOwnerError') {
@@ -244,7 +260,8 @@ function App() {
           await sleep.sleep(2);
 
           const ccAccount = await getAccount(connection, gAddrs.owner_cc_ata);
-          setCcBal(ccAccount.amount.toString());
+          // setCcBal(ccAccount.amount.toString());
+          gState.ccBal = Number(ccAccount.amount);
         } catch {}
       }
     }
@@ -252,7 +269,8 @@ function App() {
     // ccb bal
     try {
       const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
-      setCcb0Bal(ccb0Account.amount.toString());
+      // setCcb0Bal(ccb0Account.amount.toString());
+      gState.ccb0Bal = Number(ccb0Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
         || err.message === 'TokenInvalidAccountOwnerError') {
@@ -272,14 +290,16 @@ function App() {
           await sleep.sleep(2);
 
           const ccb0Account = await getAccount(connection, gAddrs.owner_ccb0_ata);
-          setCcb0Bal(ccb0Account.amount.toString());
+          // setCcb0Bal(ccb0Account.amount.toString());
+          gState.ccb0Bal = Number(ccb0Account.amount);
         } catch {}
       }
     }
 
     try {
       const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
-      setCcb1Bal(ccb1Account.amount.toString());
+      // setCcb1Bal(ccb1Account.amount.toString());
+      gState.ccb1Bal = Number(ccb1Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
         || err.message === 'TokenInvalidAccountOwnerError') {
@@ -299,7 +319,8 @@ function App() {
           await sleep.sleep(2);
 
           const ccb1Account = await getAccount(connection, gAddrs.owner_ccb1_ata);
-          setCcb1Bal(ccb1Account.amount.toString());
+          // setCcb1Bal(ccb1Account.amount.toString());
+          gState.ccb1Bal = Number(ccb1Account.amount);
         } catch {}
       }
     }
@@ -307,7 +328,8 @@ function App() {
     // ccs bal
     try {
       const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
-      setCcsBal(ccs0Account.amount.toString())
+      // setCcsBal(ccs0Account.amount.toString())
+      gState.ccs0Bal = Number(ccs0Account.amount);
     } catch (err) {
       if (err.message === 'TokenAccountNotFoundError'
         || err.message === 'TokenInvalidAccountOwnerError') {
@@ -327,25 +349,11 @@ function App() {
           await sleep.sleep(2);
 
           const ccs0Account = await getAccount(connection, gAddrs.owner_ccs0_ata);
-          setCcsBal(ccs0Account.amount.toString())
+          // setCcsBal(ccs0Account.amount.toString())
+          gState.ccs0Bal = Number(ccs0Account.amount);
         } catch {}
       }
     }
-
-    // this didn't help
-    // while (!pstate) await sleep.sleep(1);
-    /*
-    if (pstate === '0') {
-      if (Number(ccb1Bal) > 0) {
-        setRedeem('1');
-      } else { setRedeem(''); }
-    }
-    if (pstate === '2') {
-      if (Number(ccb0Bal) > 0) {
-        setRedeem('1');
-      } else { setRedeem(''); }
-    }
-    */
   }
 
   async function getProgCcBalance() {
@@ -358,7 +366,8 @@ function App() {
     // cc bal
     try {
       const ccAccount = await getAccount(connection, gAddrs.cc_ata);
-      setCcProgBal(ccAccount.amount.toString());
+      // setCcProgBal(ccAccount.amount.toString());
+      gState.ccProgBal = Number(ccAccount.amount);
     } catch { }
   }
 
@@ -370,8 +379,8 @@ function App() {
       connection, wallet, opts.preflightCommitment,
     );
     const program = new Program(idl, programID, provider);
-    let ccbA = 0;
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
+    let ccbA = 0;
 
     // ccb bal
     try {
@@ -383,12 +392,14 @@ function App() {
       const ccb1Account = await getAccount(connection, gAddrs.ccb1_ata);
       ccbA += Number(ccb1Account.amount);
     } catch { }
-    setCcbProgBal(ccbA.toString());
+    // setCcbProgBal(ccbA.toString());
+    gState.ccbProgBal = ccbA;
 
     // ccs bal
     try {
       const ccs0Account = await getAccount(connection, gAddrs.ccs0_ata);
-      setCcsProgBal(ccs0Account.amount.toString())
+      // setCcsProgBal(ccs0Account.amount.toString())
+      gState.ccsProgBal = Number(ccs0Account.amount);
     } catch { }
   }
 
@@ -397,7 +408,7 @@ function App() {
     const program = new Program(idl, programID, provider);
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
-    if (pstate === '0') {
+    if (gState.pstate === 0) {
       try {
         await program.methods.buyBonds0(
           new BN(buyBondsAmount),
@@ -423,7 +434,7 @@ function App() {
         }).rpc();
       } catch { console.log('buyBonds0 failed'); }
     }
-    if (pstate === '2') {
+    if (gState.pstate === 2) {
       try {
         await program.methods.buyBonds1(
           new BN(buyBondsAmount),
@@ -455,7 +466,7 @@ function App() {
     const program = new Program(idl, programID, provider);
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
-    if (pstate === '0') {
+    if (gState.pstate === 0) {
       try {
         await program.methods.sellBonds0(
           new BN(sellBondsAmount),
@@ -481,7 +492,7 @@ function App() {
         }).rpc();
       } catch { console.log('sellBonds0 failed'); }
     }
-    if (pstate === '2') {
+    if (gState.pstate === 2) {
       try {
         await program.methods.sellBonds1(
           new BN(sellBondsAmount),
@@ -513,7 +524,7 @@ function App() {
     const program = new Program(idl, programID, provider);
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
-    if (pstate === '0') {
+    if (gState.pstate === 0) {
       try {
         await program.methods.buyShorts0(
           new BN(buyBondsAmount),
@@ -539,7 +550,7 @@ function App() {
         }).rpc();
       } catch { console.log('buyShorts0 failed'); }
     }
-    if (pstate === '2') {
+    if (gState.pstate === 2) {
       try {
         await program.methods.buyShorts1(
           new BN(buyBondsAmount),
@@ -571,7 +582,7 @@ function App() {
     const program = new Program(idl, programID, provider);
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
-    if (pstate === '0') {
+    if (gState.pstate === 0) {
       try {
         await program.methods.sellShorts0(
           new BN(sellBondsAmount),
@@ -597,7 +608,7 @@ function App() {
         }).rpc();
       } catch { console.log('sellShorts0 failed'); }
     }
-    if (pstate === '2') {
+    if (gState.pstate === 2) {
       try {
         await program.methods.sellShorts1(
           new BN(sellBondsAmount),
@@ -631,7 +642,7 @@ function App() {
     const program = new Program(idl, programID, provider);
     if (!gAddrs.mintAuth) await initAddrs(provider,program);
 
-    if (pstate === '0') {
+    if (gState.pstate === 0) {
       try {
         await program.methods.redeemBonds1(
           gAddrs.mintAuthBump,
@@ -654,7 +665,7 @@ function App() {
         }).rpc();
       } catch { console.log('redeemBonds1 failed'); }
     }
-    if (pstate === '2') {
+    if (gState.pstate === 2) {
       try {
         await program.methods.redeemBonds0(
           gAddrs.mintAuthBump,
@@ -680,7 +691,7 @@ function App() {
   }
 
   function doUpdateClock() {
-    let tt = spw - Number(timestamp) % spw;
+    let tt = spw - gState.timestamp % spw;
     let ttleft,tstr = (tt % 60).toString();
     tt = Math.floor(tt / 60);
     if (tt > 0) {
@@ -706,33 +717,42 @@ function App() {
     } else {
       ttleft = tstr;
     }
-    setTleft(ttleft);
+    // setTleft(ttleft);
+    gState.tleft = ttleft;
+    setRedraw(gState.timestamp);
   }
 
   async function doMultiple() {
     await doFetchState();
     await getProgCcBalance();
-    if (pstate === '0') {
-      if (redeem === null) {
-        if (Number(ccb1Bal) > 0) setRedeem('1');
-      } else if (Number(ccb1Bal) === 0) {
-        setRedeem(null);
-      }
-    }
-    if (pstate === '2') {
-      if (redeem === null) {
-        if (Number(ccb0Bal) > 0) setRedeem('1');
-      } else if (Number(ccb0Bal) === 0) {
-        setRedeem(null);
-      }
-    }
-  }
-
-  async function doOnce() {
-    await doFetchState();
-    await getProgCcBalance();
     await getProgBalances();
     await getOwnerBalances();
+    if (gState.pstate === 0) {
+      if (gState.redeem === 0) {
+        // if (Number(ccb1Bal) > 0) setRedeem('1');
+        // if (Number(ccb1Bal) > 0) gState.redeem = 1;
+        if (gState.ccb1Bal > 0) gState.redeem = 1;
+      // } else if (Number(ccb1Bal) === 0) {
+      } else if (gState.ccb1Bal === 0) {
+        // setRedeem('');
+        gState.redeem = 0;
+      }
+    }
+    if (gState.pstate === 2) {
+      if (gState.redeem === 0) {
+        // if (Number(ccb0Bal) > 0) setRedeem('1');
+        // if (Number(ccb0Bal) > 0) gState.redeem = 1;
+        if (gState.ccb0Bal > 0) gState.redeem = 1;
+        console.log('pstate ',gState.pstate,' redeem ',gState.redeem,
+          ' ccb0Bal ',gState.ccb0Bal);
+      // } else if (Number(ccb0Bal) === 0) {
+      } else if (gState.ccb0Bal === 0) {
+        // setRedeem('');
+        gState.redeem = 0;
+      }
+    }
+    console.log('doMultiple ' + gState.pstate +
+      ' redeem ',gState.redeem,' ccb0Bal ',gState.ccb0Bal);
   }
 
   if (!wallet.connected) {
@@ -744,21 +764,27 @@ function App() {
     )
   } else {
     if (!fetchTimer) {
+      doMultiple();
       fetchTimer = setInterval(doMultiple,10000);
-      doOnce();
     }
-    if (!ccbProgBal) { doOnce(); }
-    if (!clockTimer && timestamp) {
+    if (!clockTimer && gState.timestamp > 0) {
       clockTimer = setInterval(() => {
-        timestamp = (Number(timestamp) + 1).toString();
+        gState.timestamp++;
         doUpdateClock();
       },1000);
     }
-    const ir = (Number(ima0)*60*60*24*365*100).toFixed(2) + '% APY';
-    const ccbBal = (Number(ccb0Bal) + Number(ccb1Bal)).toString();
+    const ir = (gState.ima0*60*60*24*365*100).toFixed(2) + '% APY';
+    // const ccbBal = (Number(ccb0Bal) + Number(ccb1Bal)).toString();
+    const ccBal = gState.ccBal.toString();
+    const ccbBal = (gState.ccb0Bal + gState.ccb1Bal).toString();
+    const ccsBal = gState.ccsBal.toString();
 
-    const ccbA = Number(ccbProgBal);
-    const cc0Amount = (Number(ccProgBal) - ccbA).toString();
+    // const ccbA = Number(ccbProgBal);
+    const cc0Amount = (gState.ccProgBal - gState.ccbProgBal).toString();
+    const ccbAmount = gState.ccbProgBal.toString();
+    const ccsAmount = gState.ccsProgBal.toString();
+
+    const tleft = gState.tleft;
     return (
       <div className="App">
         <AppHeader ir={ir} />
@@ -806,9 +832,9 @@ function App() {
             <div className="space-row"></div>
             <div className="data-row">Reserves</div>
             <div className="data-row">CC0 {cc0Amount}</div>
-            <div className="data-row">CCB {ccbProgBal}</div>
-            <div className="data-row">CC1 {ccbProgBal}</div>
-            <div className="data-row">CCS {ccsProgBal}</div>
+            <div className="data-row">CCB {ccbAmount}</div>
+            <div className="data-row">CC1 {ccbAmount}</div>
+            <div className="data-row">CCS {ccsAmount}</div>
             <div className="small-space-row"></div>
             <div className="data-row">Mints</div>
             <div className="data-row">CC {gAddrs.ccMint.toString()}</div>
@@ -824,7 +850,7 @@ function App() {
               <h3>CCS {ccsBal}</h3>
               <div className="space-row"></div>
               {
-                redeem === null ? (
+                gState.redeem === 0 ? (
                   <button className="time-button">Maturity in {tleft}</button>
                 ) : (
                   <button className="emergency-button"
