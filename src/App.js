@@ -86,6 +86,7 @@ const gAddrs = {
 const gState = {
   timestamp: 0,
   ima0: 0,
+  smod: 1,
   pstate: 0,
   tleft: 0,
   redeem: 0,
@@ -202,7 +203,8 @@ function App() {
       const state = await program.account.mintAuth.fetch(gAddrs.mintAuth);
       gState.pstate = Number(state.maturityState);
       gState.ima0 = Number(state.ima0);
-      if (state.timestamp != otimestamp) {
+      gState.smod = Number(state.smod);
+      if (state.timestamp !== otimestamp) {
         gState.timestamp = Number(state.timestamp);
         otimestamp = Number(state.timestamp);
         doUpdateClock();
@@ -747,6 +749,11 @@ function App() {
     const ccbAmount = gState.ccbProgBal.toString();
     const ccsAmount = gState.ccsProgBal.toString();
 
+    const ccbPrice = (Number(cc0Amount) / Number(ccbAmount)).toFixed(4);
+    const ccsPrice = (Number(ccbAmount) / Number(ccsAmount) / gState.smod)
+      .toFixed(4);
+
+
     const tleft = gState.tleft;
     return (
       <div className="App">
@@ -793,6 +800,10 @@ function App() {
                 onClick={e => setSellShortsAmount(ccsBal)}>Max</button>
             </div>
             <div className="space-row"></div>
+            <div className="data-row">Prices</div>
+            <div className="data-row">CCB {ccbPrice}</div>
+            <div className="data-row">CCS {ccsPrice}</div>
+            <div className="small-space-row"></div>
             <div className="data-row">Reserves</div>
             <div className="data-row">CC0 {cc0Amount}</div>
             <div className="data-row">CCB {ccbAmount}</div>
