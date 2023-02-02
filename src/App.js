@@ -576,7 +576,7 @@ function App() {
           ccs0Mint: gAddrs.ccs0Mint,
 
           ownerCcToken: gAddrs.owner_cc_ata,
-          ownerCcb0Token: gAddrs.owner_ccs0_ata,
+          ownerCcs0Token: gAddrs.owner_ccs0_ata,
 
           ccToken: gAddrs.cc_ata,
           ccb0Token: gAddrs.ccb0_ata,
@@ -584,7 +584,9 @@ function App() {
           owner: provider.wallet.publicKey,
           tokenProgram: utils.token.TOKEN_PROGRAM_ID,
         }).rpc();
-      } catch { console.log('sellShorts0 failed'); }
+      } catch (err) {
+        console.log(err);
+        console.log('sellShorts0 failed'); }
     }
     if (gState.pstate === 2) {
       try {
